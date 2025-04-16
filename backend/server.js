@@ -19,16 +19,7 @@ connectCloudinary();
 // ------ Middlewares ------
 
 app.use(express.json());
-app.use(cors({
-    origin: [
-      'https://page-turner-henna.vercel.app',  // Vercel frontend
-      'http://localhost:5173',                // Frontend local development
-      'http://localhost:4000'                 // Backend local development
-    ],
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    credentials: true,
-    optionsSuccessStatus: 200
-  }));
+app.use(cors());
 app.use('/uploads', express.static('uploads')); // Add this line to serve uploaded files
 
 // ------ API Endpoints ------
