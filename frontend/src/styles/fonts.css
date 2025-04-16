@@ -1,0 +1,24 @@
+@font-face {
+    font-family: 'Monsterat';
+    src: url('../assets/fonts/Monsterat.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'SourceSans';
+    src: url('../assets/fonts/SourceSans.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Editorial';
+    src: url('../assets/fonts/EditorialRegular.otf') format('truetype');
+}
+
+@font-face {
+    font-family: 'EditorialLight';
+    src: url('../assets/fonts/EditorialLight.otf') format('truetype');
+}
+
+@font-face {
+    font-family: 'EditorialBold';
+    src: url('../assets/fonts/EditorialBold.otf') format('truetype');
+}
