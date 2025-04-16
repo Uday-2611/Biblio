@@ -48,7 +48,7 @@ const ShopContextProvider = (props) => {
     const [cartItems, setCartItems] = useState({});
     const [products, setProducts] = useState([]);
     const navigate = useNavigate();
-    const backendUrl = import.meta.env.VITE_BACKEND_URL;
+    const backendUrl = "https://pageturner-backend.onrender.com";
     const [token, setToken] = useState('');
     const [user, setUser] = useState(null);
 
