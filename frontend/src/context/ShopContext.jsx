@@ -26,7 +26,9 @@ export const ShopContext = createContext({
     registerUser: () => { },
     logout: () => { },
     requireAuth: () => { },
-    fetchProducts: () => { } // Add fetchProducts to context value
+    fetchProducts: () => { }, // Add fetchProducts to context value
+    sendResetCode: () => { },
+    resetPassword: () => { },
 });
 
 const ShopContextProvider = (props) => {
@@ -204,6 +206,44 @@ const ShopContextProvider = (props) => {
         }, 0);
     };
 
+    const sendResetCode = async (email) => {
+        try {
+            const response = await axios.post(`${backendUrl}/api/user/forgot-password`, { email });
+            if (response.data.success) {
+                toast.success('Reset code sent to your email');
+                return true;
+            } else {
+                toast.error(response.data.message);
+                return false;
+            }
+        } catch (error) {
+            console.log(error);
+            toast.error(error.response?.data?.message || 'Failed to send reset code');
+            return false;
+        }
+    }
+
+    const resetPassword = async (email, code, newPassword) => {
+        try {
+            const response = await axios.post(`${backendUrl}/api/user/reset-password`, {
+                email,
+                code,
+                newPassword
+            });
+            if (response.data.success) {
+                toast.success('Password reset successfully');
+                return true;
+            } else {
+                toast.error(response.data.message);
+                return false;
+            }
+        } catch (error) {
+            console.log(error);
+            toast.error(error.response?.data?.message || 'Failed to reset password');
+            return false;
+        }
+    }
+
     const value = {
         products,
         currency,
@@ -228,7 +268,9 @@ const ShopContextProvider = (props) => {
         registerUser,
         logout,
         requireAuth,
-        fetchProducts // Add fetchProducts to context value
+        fetchProducts, // Add fetchProducts to context value
+        sendResetCode,
+        resetPassword,
     }
 
     return (

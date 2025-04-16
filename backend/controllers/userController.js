@@ -2,6 +2,8 @@ import validator from 'validator';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import userModel from '../models/userModel.js';
+import { sendResetCodeEmail } from '../services/emailService.js';
+
 // ------ Used to create logic for user to create an account or login on the website ------ 
 
 const createToken = (id) => {
@@ -182,4 +184,110 @@ const getCurrentUser = async (req, res) => {
     }
 };
 
-export { loginUser, registerUser, adminLogin, getCurrentUser };
+// Generate a random 6-digit code
+const generateResetCode = () => {
+    return Math.floor(100000 + Math.random() * 900000).toString();
+};
+
+// Send reset code to user's email
+const sendResetCode = async (req, res) => {
+    try {
+        const { email } = req.body;
+        const user = await userModel.findOne({ email });
+
+        if (!user) {
+            return res.json({
+                success: false,
+                message: 'No account found with this email'
+            });
+        }
+
+        // Generate and save reset code
+        const resetCode = generateResetCode();
+        const resetCodeExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes expiry
+
+        // Save the code first
+        await userModel.findByIdAndUpdate(user._id, {
+            resetCode,
+            resetCodeExpires
+        });
+
+        // Then send the email
+        const emailSent = await sendResetCodeEmail(email, resetCode);
+        
+        if (!emailSent) {
+            // If email fails, remove the code from database
+            await userModel.findByIdAndUpdate(user._id, {
+                resetCode: null,
+                resetCodeExpires: null
+            });
+            return res.json({
+                success: false,
+                message: 'Failed to send reset code email. Please try again.'
+            });
+        }
+
+        res.json({
+            success: true,
+            message: 'Reset code sent to your email',
+            resetCode // Only for testing, remove in production
+        });
+    } catch (error) {
+        console.log(error);
+        res.json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+// Verify code and reset password
+const verifyAndResetPassword = async (req, res) => {
+    try {
+        const { email, code, newPassword } = req.body;
+        const user = await userModel.findOne({ 
+            email,
+            resetCode: code,
+            resetCodeExpires: { $gt: Date.now() }
+        });
+
+        if (!user) {
+            return res.json({
+                success: false,
+                message: 'Invalid or expired reset code'
+            });
+        }
+
+        // Validate new password
+        if (newPassword.length < 8) {
+            return res.json({
+                success: false,
+                message: 'Password must be at least 8 characters long'
+            });
+        }
+
+        // Hash new password
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+        // Update password and clear reset code
+        await userModel.findByIdAndUpdate(user._id, {
+            password: hashedPassword,
+            resetCode: null,
+            resetCodeExpires: null
+        });
+
+        res.json({
+            success: true,
+            message: 'Password reset successfully'
+        });
+    } catch (error) {
+        console.log(error);
+        res.json({
+            success: false,
+            message: error.message
+        });
+    }
+};
+
+export { loginUser, registerUser, adminLogin, getCurrentUser, sendResetCode, verifyAndResetPassword };
