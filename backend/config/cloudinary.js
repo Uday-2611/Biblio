@@ -1,11 +1,11 @@
 import { v2 as cloudinary } from 'cloudinary';
 
-const connectCloudinary = () => {
+const connectCloudinary = async () => {
     try {
         cloudinary.config({
-            cloud_name: 'dxqjyqz8p',
-            api_key: '583153789193697',
-            api_secret: 'Ux_Ry6xKYB_3RzR9tGD9GQqVlYw'
+            cloud_name: 'dxdnjetf1',
+            api_key: '592521867292979',
+            api_secret: 'Q_UKsaudFmduDqjOZ81UlSxPyH4'
         });
         console.log('Cloudinary Connected Successfully');
     } catch (error) {
