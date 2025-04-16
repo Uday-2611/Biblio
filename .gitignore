@@ -1,0 +1,41 @@
+# Node modules
+node_modules/
+
+# Environment variables
+.env
+
+# Logs
+logs/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build files
+/build
+/dist
+
+# Dependency directories
+/.pnp
+.pnp.js
+
+# VSCode settings (optional)
+.vscode/
+
+# npm/yarn lock files (optional if you're using one or the other)
+package-lock.json
+yarn.lock
+
+# coverage reports
+coverage/
+
+# Optional next.js or other frameworks
+.next
+out/
+
+# Misc
+.env.local
+.env.development
+.env.test
+.env.production
