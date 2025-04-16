@@ -3,14 +3,19 @@ import UserReview from '../components/UserReview'
 import { useParams } from 'react-router-dom'
 import { ShopContext } from '../context/ShopContext'
 import RelatedProducts from '../components/RelatedProducts'
+import { toast } from 'react-toastify'
+import axios from 'axios'
 
 const Product = () => {
-  
   const { productId } = useParams();
-  const { products, currency, addToCart, backendUrl } = useContext(ShopContext);
+  const { products, currency, addToCart, backendUrl, user, requireAuth, token } = useContext(ShopContext);
   
   const [quantity, setQuantity] = useState(1);
   const [productData, setProductData] = useState(false);
+  const [reviews, setReviews] = useState([]);
+  const [newReview, setNewReview] = useState('');
+  const [rating, setRating] = useState(5);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const getImageUrl = (imagePath) => {
     return `${backendUrl}/uploads/${imagePath}`;
@@ -23,11 +28,99 @@ const Product = () => {
         return null;
       }
     })
-  } 
+  }
+
+  const fetchReviews = async () => {
+    try {
+      const response = await axios.get(`${backendUrl}/api/review/product/${productId}`);
+      if (response.data.success) {
+        setReviews(response.data.reviews);
+      }
+    } catch (error) {
+      console.error('Error fetching reviews:', error);
+      toast.error('Failed to load reviews');
+    }
+  };
+
+  const handleSubmitReview = async (e) => {
+    e.preventDefault();
+    if (!requireAuth()) return;
+
+    if (!newReview.trim()) {
+      toast.error('Please write a review');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const response = await axios.post(`${backendUrl}/api/review/add`, {
+        productId,
+        rating,
+        review: newReview
+      }, {
+        headers: { token }
+      });
+
+      if (response.data.success) {
+        toast.success('Review added successfully');
+        setNewReview('');
+        setRating(5);
+        await fetchReviews();
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.error('Error submitting review:', error);
+      toast.error('Failed to submit review');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteReview = async (reviewId) => {
+    try {
+      const response = await axios.delete(`${backendUrl}/api/review/${reviewId}`, {
+        headers: { token }
+      });
+
+      if (response.data.success) {
+        toast.success('Review deleted successfully');
+        await fetchReviews();
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.error('Error deleting review:', error);
+      toast.error('Failed to delete review');
+    }
+  };
 
   useEffect(() => {
     fetchProductData();
-  }, [productId, products])
+  }, [productId, products]);
+
+  useEffect(() => {
+    if (productId) {
+      fetchReviews();
+    }
+  }, [productId]);
+
+  const renderStars = () => {
+    return (
+      <div className='flex gap-2 mb-4'>
+        {[1, 2, 3, 4, 5].map((star) => (
+          <button
+            key={star}
+            type="button"
+            onClick={() => setRating(star)}
+            className='text-2xl'
+          >
+            <i className={`ri-star-${rating >= star ? 'fill' : 'line'} text-yellow-500`} />
+          </button>
+        ))}
+      </div>
+    );
+  };
 
   return productData ? (
     <div className='w-[calc(100%+4vw)] -mx-4 sm:w-[calc(100%+10vw)] sm:-mx-[5vw] md:w-[calc(100%+14vw)] md:-mx-[7vw] lg:w-[calc(100%+4vw)] lg:-mx-[2vw] min-h-screen bg-white'>
@@ -85,18 +178,38 @@ const Product = () => {
         <div className='flex w-[90%] m-auto gap-10 mb-20'>
           <div className='w-1/2'>
             <h1 className='text-[2vw] font-medium font-[SourceSans] mb-4'>Reviews</h1>
-            <form action="" className='mt-2'>
+            <form onSubmit={handleSubmitReview} className='mt-2'>
+              {renderStars()}
               <textarea
+                value={newReview}
+                onChange={(e) => setNewReview(e.target.value)}
                 className='border-2 w-full h-[20vh] rounded-xl border-neutral-200 p-4 font-[Monsterat] placeholder:text-neutral-400'
-                placeholder='Write a review'
+                placeholder={user ? 'Write a review' : 'Please login to write a review'}
+                disabled={!user || isSubmitting}
               />
+              <button
+                type="submit"
+                disabled={!user || isSubmitting}
+                className='mt-4 bg-[#22df04] text-black px-6 py-2 rounded-lg font-[Monsterat] text-sm disabled:opacity-50'
+              >
+                {isSubmitting ? 'Submitting...' : 'Submit Review'}
+              </button>
             </form>
           </div>
 
           <div className='w-1/2 flex flex-col gap-4'>
-            <UserReview />
-            <UserReview />
-            <UserReview />
+            {reviews.length === 0 ? (
+              <p className='text-neutral-500 text-center py-8'>No reviews yet</p>
+            ) : (
+              reviews.map((review) => (
+                <UserReview
+                  key={review._id}
+                  review={review}
+                  onDelete={handleDeleteReview}
+                  canDelete={user && user.id === review.userId._id}
+                />
+              ))
+            )}
           </div>
 
           {/* ------ Related Products ------ */}
