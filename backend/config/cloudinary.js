@@ -1,16 +1,9 @@
 import { v2 as cloudinary } from 'cloudinary';
 
-const connectCloudinary = () => {
-    try {
-        cloudinary.config({
-            cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-            api_key: process.env.CLOUDINARY_API_KEY,
-            api_secret: process.env.CLOUDINARY_API_SECRET
-        });
-        console.log('Cloudinary Connected');
-    } catch (error) {
-        console.log('Cloudinary Connection Error:', error);
-    }
-};
+cloudinary.config({
+    cloud_name: 'dxqjyqz8p',
+    api_key: '583153789193697',
+    api_secret: 'Ux_Ry6xKYB_3RzR9tGD9GQqVlYw'
+});
 
-export default connectCloudinary;
+export default cloudinary;

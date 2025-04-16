@@ -9,28 +9,38 @@ const addProduct = async (req, res) => {
         
         // Process images
         if (req.files) {
-            Object.keys(req.files).forEach(key => {
-                images.push(req.files[key][0].filename);
-            });
+            for (const key of Object.keys(req.files)) {
+                const file = req.files[key][0];
+                if (file.path) { // Cloudinary uploads will have a path
+                    images.push(file.path);
+                }
+            }
+        }
+
+        if (images.length === 0) {
+            return res.status(400).json({ success: false, message: 'At least one image is required' });
         }
 
         const newProduct = new productModel({
             name,
-            price,
+            price: Number(price), // Ensure price is a number
             Category,
             Condition,
             description,
             image: images,
             sellerId: req.user._id,
-            date: date || new Date()  // Add seller ID from auth middleware
+            date: date || new Date()
         });
 
         await newProduct.save();
-        res.json({ success: true, message: 'Product added successfully' });
+        res.status(201).json({ success: true, message: 'Product added successfully' });
 
     } catch (error) {
-        console.log(error);
-        res.json({ success: false, message: error.message });
+        console.error('Error adding product:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Failed to add product. Please try again.'
+        });
     }
 };
 
