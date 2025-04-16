@@ -87,10 +87,10 @@ const Sell = () => {
 
   // Fix the price input section structure
   return (
-    <div className='flex min-h-screen bg-white'>
+    <div className='flex w-screen min-h-screen bg-white'>
       <Sidebar />
-      <main className='flex-1 ml-64'>
-        <div className='max-w-[1200px] mx-auto p-8 pt-24'>
+      <main className='flex-1 pl-64'>
+        <div className='max-w-[1200px] w-full mx-auto px-6 py-8 pt-24'>
           <div className='flex flex-col gap-6'>
             <h1 className='font-["SourceSans"] text-4xl font-medium'>Add New Item</h1>
             <form onSubmit={handleSubmit} className='flex flex-col gap-6 max-w-2xl'>

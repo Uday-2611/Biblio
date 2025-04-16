@@ -31,10 +31,10 @@ const ListProduct = () => {
   }, [token]);
 
   return (
-    <div className='flex min-h-screen bg-white'>
+    <div className='flex w-screen min-h-screen bg-white'>
       <Sidebar />
-      <main className='flex-1 ml-64'>
-        <div className='max-w-[1200px] mx-auto p-8 pt-24'>
+      <main className='flex-1 pl-64'>
+        <div className='w-full max-w-[1200px] mx-auto px-6 py-8 pt-24'>
           <div className='flex justify-between items-center mb-8'>
             <h1 className='text-3xl font-[Editorial]'>My Sales History</h1>
             <Link 
