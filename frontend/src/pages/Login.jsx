@@ -38,39 +38,103 @@ const Login = () => {
   }, [token, navigate, from])
 
   return (
-    <div className='h-screen w-full bg-white flex '>
-      <div className='w-full flex flex-col items-center'>
-        <div className=''>
-          <h1 className='text-[6vw] mt-5 text-black font-[Novarese] ' >
+    <div className='min-h-screen w-full bg-white flex items-center justify-center py-16'>
+      <div className='w-full max-w-md flex flex-col items-center bg-white rounded-2xl shadow-lg p-8'>
+        <div className='text-center mb-8'>
+          <h1 className='text-5xl mb-4 text-black font-[Editorial]'>
             Page Turner
           </h1>
-          <h1>{currentState}</h1>
+          <h2 className='text-2xl font-[SourceSans] text-neutral-600'>
+            {currentState === 'Login' ? 'Welcome Back!' : 'Create Account'}
+          </h2>
         </div>
 
-        <div className=' w-full m-auto flex flex-col font-[Monsterat]'>
-          <form onSubmit={onSubmitHandler} className='flex flex-col gap-3'>
-            {currentState === 'Login' ? '' : <input onChange={(e) => setName(e.target.value)} value={name} required type="text" placeholder='NAME' className='bg-white p-3 rounded-lg w-[25%] m-auto text-center text-lg font-semibold placeholder-neutral-400 placeholder:font-[Monsterat] placeholder:text-md placeholder:font-medium border-2' />}
+        <div className='w-full'>
+          <form onSubmit={onSubmitHandler} className='flex flex-col gap-4'>
+            {currentState === 'Login' ? '' : (
+              <div className='space-y-2'>
+                <label className='text-sm font-medium text-neutral-600'>Name</label>
+                <input 
+                  onChange={(e) => setName(e.target.value)} 
+                  value={name} 
+                  required 
+                  type="text" 
+                  placeholder='Enter your name'
+                  className='w-full p-3 rounded-lg border-2 border-neutral-200 focus:border-black transition-colors outline-none text-lg'
+                />
+              </div>
+            )}
 
-            <input onChange={(e) => setEmail(e.target.value)} value={email} type="email" placeholder='EMAIL' className='bg-white p-3 rounded-lg w-[25%] m-auto text-center text-lg font-semibold placeholder-neutral-400 placeholder:font-[Monsterat] placeholder:text-md placeholder:font-medium border-2' />
+            <div className='space-y-2'>
+              <label className='text-sm font-medium text-neutral-600'>Email</label>
+              <input 
+                onChange={(e) => setEmail(e.target.value)} 
+                value={email} 
+                type="email" 
+                placeholder='Enter your email'
+                className='w-full p-3 rounded-lg border-2 border-neutral-200 focus:border-black transition-colors outline-none text-lg'
+              />
+            </div>
 
-            <input onChange={(e) => setPassword(e.target.value)} value={password} type="password" placeholder='PASSWORD' className='bg-white p-3 rounded-lg w-[25%] m-auto text-center text-lg font-semibold placeholder-neutral-400 placeholder:font-[Monsterat] placeholder:text-md placeholder:font-medium border-2' />
+            <div className='space-y-2'>
+              <label className='text-sm font-medium text-neutral-600'>Password</label>
+              <input 
+                onChange={(e) => setPassword(e.target.value)} 
+                value={password} 
+                type="password" 
+                placeholder='Enter your password'
+                className='w-full p-3 rounded-lg border-2 border-neutral-200 focus:border-black transition-colors outline-none text-lg'
+              />
+            </div>
 
-            <button className='bg-black text-white p-3 rounded-lg w-[25%] m-auto font-medium text-lg'> {currentState === 'Login' ? 'LOGIN' : 'SIGN UP'} </button>
+            <button 
+              className='bg-black text-white p-4 rounded-lg font-medium text-lg w-full mt-4 hover:bg-neutral-800 transition-colors'
+            > 
+              {currentState === 'Login' ? 'LOGIN' : 'SIGN UP'} 
+            </button>
 
-            {currentState === "Login" ? <p className='cursor-pointer m-auto'>Forgot Password ?</p> : ''}
-
+            {currentState === "Login" && (
+              <p className='text-center text-sm text-neutral-600 hover:text-black transition-colors cursor-pointer'>
+                Forgot Password?
+              </p>
+            )}
           </form>
 
-          <h1 className='text-black m-auto mt-4 font-medium '>OR</h1>
+          <div className='relative my-8'>
+            <hr className='border-t border-neutral-200' />
+            <span className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-4 text-sm text-neutral-500 font-medium'>
+              OR
+            </span>
+          </div>
 
-          <button className='bg-black text-white p-3 rounded-lg w-[25%] text-lg font-medium m-auto mt-4 flex gap-3 justify-center'><i class="ri-google-fill"></i>CONTINUE WITH GOOGLE</button>
+          <button className='w-full bg-black text-white p-4 rounded-lg font-medium text-lg flex items-center justify-center gap-3 hover:bg-neutral-800 transition-colors'>
+            <i className="ri-google-fill"></i>
+            CONTINUE WITH GOOGLE
+          </button>
 
-          {
-            currentState === 'Login'
-              ? <h4 onClick={() => setCurrentState('Sign Up')} className=' cursor-pointer m-auto mt-2 text-neutral-400 text-sm '>CREATE NEW ACCOUNT</h4>
-              : <h4 onClick={() => setCurrentState('Login')} className=' cursor-pointer m-auto mt-2 text-neutral-400 text-sm '>LOGIN</h4>
-          }
-
+          <p className='text-center mt-6 text-sm'>
+            {currentState === 'Login' ? (
+              <span className='text-neutral-600'>
+                Don't have an account?{' '}
+                <button 
+                  onClick={() => setCurrentState('Sign Up')} 
+                  className='text-black font-medium hover:underline'
+                >
+                  Sign up
+                </button>
+              </span>
+            ) : (
+              <span className='text-neutral-600'>
+                Already have an account?{' '}
+                <button 
+                  onClick={() => setCurrentState('Login')} 
+                  className='text-black font-medium hover:underline'
+                >
+                  Login
+                </button>
+              </span>
+            )}
+          </p>
         </div>
       </div>
     </div>

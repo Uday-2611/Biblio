@@ -19,13 +19,18 @@ const LatestCollection = () => {
     }, [products, user])
 
     return (
-        <div className='w-full flex object-center'>
-            {/* Rendering Products */}
-            {
-                LatestCollection.map((item, index) => (
-                    <ProductDisplay key={index} id={item._id} image={item.image} name={item.name} price={item.price} />
-                ))
-            }
+        <div className='container mx-auto px-8'>
+            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8'>
+                {LatestCollection.map((item, index) => (
+                    <ProductDisplay 
+                        key={index} 
+                        id={item._id} 
+                        image={item.image} 
+                        name={item.name} 
+                        price={item.price}
+                    />
+                ))}
+            </div>
         </div>
     )
 }
