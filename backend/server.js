@@ -1,14 +1,3 @@
-// cors is used so that front end ip can use backend
-// dotenv is used to hide the port number
-// express is used for apis
-// jspnwebtoken is used for user authentication 
-// mongoose is used to connect mongodb
-// multer is used to store images on cloudinary storage
-// nodemon will restart the server whenever we make changes
-// razorpay for online payment 
-// validator for validation
-// bcrypt for encryption of password
-
 import express from 'express';
 import cors from 'cors';
 import 'dotenv/config';
@@ -30,7 +19,16 @@ connectCloudinary();
 // ------ Middlewares ------
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: [
+      'https://page-turner-henna.vercel.app',  // Vercel frontend
+      'http://localhost:5173',                // Frontend local development
+      'http://localhost:4000'                 // Backend local development
+    ],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    credentials: true,
+    optionsSuccessStatus: 200
+  }));
 app.use('/uploads', express.static('uploads')); // Add this line to serve uploaded files
 
 // ------ API Endpoints ------
