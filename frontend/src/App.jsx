@@ -13,8 +13,8 @@ import FrontPage from './pages/FrontPage'
 import './styles/fonts.css'
 import Sell from './pages/sellProduct'
 import AllOrders from './pages/AllOrders'
-import ListProduct from './pages/listProduct'
-import AdminOrders from './pages/adminOrders'
+import ListProduct from './pages/ListProduct'
+import AdminOrders from './pages/AdminOrders'
 import { ToastContainer } from 'react-toastify';
 import { ShopContext } from './context/ShopContext'
 
