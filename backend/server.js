@@ -20,12 +20,7 @@ connectCloudinary();
 // ------ Middlewares ------
 
 app.use(express.json());
-app.use(cors({
-  origin: ['http://localhost:5173'],
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  credentials: true,
-  allowedHeaders: ['Content-Type', 'Authorization', 'token']
-}));
+app.use(cors());
 app.use('/uploads', express.static('uploads'));
 
 // ------ API Endpoints ------
