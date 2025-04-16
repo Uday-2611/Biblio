@@ -167,7 +167,7 @@ const Profile = () => {
                   </div>
                   <div className='mt-4 flex justify-between items-center border-t pt-4'>
                     <div>
-                      <p className='text-neutral-500'>Payment: {order.paymentMethod === 'cod' ? 'Cash on Delivery' : 'Google Pay'}</p>
+                      <p className='text-neutral-500'>Payment: Cash on Delivery</p>
                       <p className='text-neutral-500'>Status: 
                         <span className={order.payment ? 'text-green-600 ml-1' : 'text-yellow-600 ml-1'}>
                           {order.payment ? 'Completed' : 'Pending'}

@@ -130,9 +130,12 @@ const AdminOrders = () => {
                       <td className='p-4'>{new Date(order.date).toLocaleDateString()}</td>
                       <td className='p-4'>₹{order.amount}</td>
                       <td className='p-4'>
-                        <span className={order.payment ? 'text-green-600' : 'text-yellow-600'}>
-                          {order.payment ? 'Completed' : 'Pending'}
-                        </span>
+                        <div>
+                          <p>Cash on Delivery</p>
+                          <span className={order.payment ? 'text-green-600' : 'text-yellow-600'}>
+                            {order.payment ? 'Completed' : 'Pending'}
+                          </span>
+                        </div>
                       </td>
                       <td className='p-4'>
                         <select 

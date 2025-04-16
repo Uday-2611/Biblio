@@ -69,7 +69,7 @@ const PlaceOrder = () => {
         address: formData,
         items: orderItems,
         amount: getCartAmount() + delivery_fee,
-        paymentMethod: method
+        paymentMethod: 'cod'  // Always COD now
       };
 
       const response = await axios.post(`${backendUrl}/api/order/place`, orderData, { 
@@ -97,29 +97,13 @@ const PlaceOrder = () => {
         <div className='w-1/2 p-16 flex flex-col gap-8 overflow-y-auto scrollbar-none ml-0'>
           <h1 className='font-[Editorial] text-4xl'>Page Turner</h1>
 
-          <div className='font-[SourceSans]'>
-            <h2 className='text-sm text-neutral-500 mb-4 text-center'>Payment Method</h2>
-            <div className='flex gap-4 w-[80%] m-auto'>
-              <button 
-                onClick={() => setMethod('googlepay')} 
-                className={`w-1/2 py-3 px-6 rounded-lg font-[Monsterat] flex items-center justify-center gap-2 transition-colors
-                  ${method === 'googlepay' 
-                    ? 'bg-green-500 text-white' 
-                    : 'bg-black text-white'}`}
-              >
-                <i className="ri-google-fill text-xl"></i>
-                GOOGLE PAY
-              </button>
-              <button 
-                onClick={() => setMethod('cod')} 
-                className={`w-1/2 py-3 px-6 rounded-lg font-[Monsterat] flex items-center justify-center gap-2 transition-colors
-                  ${method === 'cod' 
-                    ? 'bg-green-500 text-white' 
-                    : 'border-2 border-neutral-200 text-black'}`}
-              >
-                <i className="ri-money-dollar-box-line text-xl"></i>
-                CASH ON DELIVERY
-              </button>
+          <div className='font-[SourceSans] bg-neutral-50 p-6 rounded-lg'>
+            <div className='flex items-center gap-3'>
+              <i className="ri-money-dollar-box-line text-xl"></i>
+              <div>
+                <h2 className='font-medium'>Cash on Delivery</h2>
+                <p className='text-sm text-neutral-600'>Pay when you receive your order</p>
+              </div>
             </div>
           </div>
 

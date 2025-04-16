@@ -94,7 +94,7 @@ const AllOrders = () => {
                 </div>
                 <div className='mt-4 pt-4 border-t flex justify-between items-center'>
                   <div>
-                    <p className='text-neutral-500'>Payment Method: {order.paymentMethod === 'cod' ? 'Cash on Delivery' : 'Google Pay'}</p>
+                    <p className='text-neutral-500'>Payment Method: Cash on Delivery</p>
                     <p className='text-neutral-500'>Payment Status: 
                       <span className={order.payment ? 'text-green-600 ml-1' : 'text-yellow-600 ml-1'}>
                         {order.payment ? 'Completed' : 'Pending'}
