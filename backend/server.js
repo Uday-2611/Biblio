@@ -9,6 +9,7 @@ import sellerRouter from './routes/sellerRoute.js';
 import cartRouter from './routes/cartRoute.js';
 import orderRouter from './routes/orderRoute.js';
 import reviewRouter from './routes/reviewRoute.js';
+import errorHandler from './middlewares/errorHandler.js';
 
 // ------ App Config ------
 
@@ -34,9 +35,20 @@ app.use('/api/review', reviewRouter);
 
 app.get('/' , (req, res) => {
     res.send('API Working');
-})
+});
+
+// Error handling middleware
+app.use(errorHandler);
+
+// Handle 404 routes
+app.use((req, res) => {
+    res.status(404).json({
+        success: false,
+        message: 'Route not found'
+    });
+});
 
 // ------ Starting Server ------
-app.listen(port, () => console.log('Server started on PORT: ' + port))
+app.listen(port, () => console.log('Server started on PORT: ' + port));
 
 // to start the server -- npm run server
