@@ -50,6 +50,8 @@ const Profile = () => {
   }, [token]);
 
   const getImageUrl = (imagePath) => {
+    if (!imagePath) return '';
+    if (imagePath.startsWith('http')) return imagePath;
     return `${backendUrl}/uploads/${imagePath}`;
   };
 
