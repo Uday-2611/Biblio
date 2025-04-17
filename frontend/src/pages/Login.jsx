@@ -176,24 +176,14 @@ const Login = () => {
                   setCurrentState('Forgot Password');
                   setPassword('');
                 }}
-                className='text-center text-sm text-neutral-600 hover:text-black transition-colors cursor-pointer w-full'
+                className='text-center text-sm text-neutral-600 hover:text-black transition-colors cursor-pointer w-full mt-4'
               >
                 Forgot Password?
               </button>
             )}
           </form>
 
-          <div className='relative my-8'>
-            <hr className='border-t border-neutral-200' />
-            <span className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-4 text-sm text-neutral-500 font-medium'>
-              OR
-            </span>
-          </div>
-
-          <button className='w-full bg-black text-white p-4 rounded-lg font-medium text-lg flex items-center justify-center gap-3 hover:bg-neutral-800 transition-colors'>
-            <i className="ri-google-fill"></i>
-            CONTINUE WITH GOOGLE
-          </button>
+          {/* Removed the divider and Google sign-in button */}
 
           <p className='text-center mt-6 text-sm'>
             {currentState === 'Login' ? (
