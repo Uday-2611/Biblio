@@ -7,10 +7,13 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: true,
+    minify: 'terser',
     rollupOptions: {
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom', 'react-router-dom'],
+          styles: ['styled-components'],
+          utils: ['axios', 'react-toastify']
         },
       },
     },
@@ -19,4 +22,8 @@ export default defineConfig({
     port: 3000,
     host: true,
   },
+  preview: {
+    port: 3000,
+    host: true,
+  }
 })
