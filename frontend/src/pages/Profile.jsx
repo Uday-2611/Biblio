@@ -102,13 +102,7 @@ const Profile = () => {
 
             <div className='flex flex-col gap-4'>
               {recentOrders.map((order) => (
-                <Order
-                  key={order._id}
-                  order={order}
-                  backendUrl={backendUrl}
-                  currency="₹"
-                  onProductClick={(productId) => navigate(`/product/${productId}`)}
-                />
+                <Order key={order._id} order={order} backendUrl={backendUrl} currency="₹" onProductClick={(productId) => navigate(`/product/${productId}`)} />
               ))}
             </div>
           </div>
@@ -127,16 +121,8 @@ const Profile = () => {
 
               <div className='grid grid-cols-4 gap-4 mt-4'>
                 {sellerProducts.slice(0, 4).map((product) => (
-                  <div 
-                    key={product._id} 
-                    className='p-4 rounded-sm bg-neutral-100 cursor-pointer hover:bg-neutral-200 transition-all'
-                    onClick={() => handleProductClick(product)}
-                  >
-                    <img 
-                      src={product.image && product.image[0] ? product.image[0] : ''} 
-                      alt={product.name} 
-                      className='w-full h-48 object-contain object-center rounded-sm' 
-                    />
+                  <div key={product._id} className='p-4 rounded-sm bg-neutral-100 cursor-pointer hover:bg-neutral-200 transition-all' onClick={() => handleProductClick(product)} >
+                    <img src={product.image && product.image[0] ? product.image[0] : ''} alt={product.name} className='w-full h-48 object-contain object-center rounded-sm'/>
                     <h3 className='font-medium mt-2 font-[Monsterat]'>{product.name}</h3>
                     <div className='flex w-[100%] justify-between items-center'>
                       <p className='text-neutral-500'>₹{product.price}</p>
