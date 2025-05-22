@@ -1,10 +1,9 @@
-import React, { useContext, useState } from 'react'
+import { useContext, useState } from 'react'
 import { ShopContext } from '../context/ShopContext';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
 const PlaceOrder = () => {
-  const [method, setMethod] = useState('cod');
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -15,17 +14,7 @@ const PlaceOrder = () => {
     phone: ''
   });
 
-  const { 
-    currency, 
-    getCartAmount, 
-    delivery_fee, 
-    navigate, 
-    token, 
-    cartItems, 
-    backendUrl, 
-    setCartItems, 
-    products 
-  } = useContext(ShopContext);
+  const { getCartAmount, delivery_fee, navigate, token, cartItems, backendUrl, setCartItems, products } = useContext(ShopContext);
 
   const onChangeHandler = (event) => {
     const name = event.target.name;
@@ -33,12 +22,6 @@ const PlaceOrder = () => {
     setFormData(data => ({ ...data, [name]: value }));
   }
 
-  // Helper function to get complete image URL
-  const getImageUrl = (imagePath) => {
-    return `${backendUrl}/uploads/${imagePath}`;
-  };
-
-  // Get cart items with product details
   const getCartProducts = () => {
     const cartProducts = [];
     for (const itemId in cartItems) {
@@ -59,7 +42,7 @@ const PlaceOrder = () => {
     event.preventDefault();
     try {
       const orderItems = getCartProducts();
-      
+
       if (orderItems.length === 0) {
         toast.error('Your cart is empty');
         return;
@@ -69,11 +52,11 @@ const PlaceOrder = () => {
         address: formData,
         items: orderItems,
         amount: getCartAmount() + delivery_fee,
-        paymentMethod: 'cod'  // Always COD now
+        paymentMethod: 'cod'
       };
 
-      const response = await axios.post(`${backendUrl}/api/order/place`, orderData, { 
-        headers: { token } 
+      const response = await axios.post(`${backendUrl}/api/order/place`, orderData, {
+        headers: { token }
       });
 
       if (response.data.success) {
@@ -84,7 +67,6 @@ const PlaceOrder = () => {
         toast.error(response.data.message);
       }
     } catch (error) {
-      console.log(error);
       toast.error(error.response?.data?.message || error.message);
     }
   }
@@ -94,8 +76,8 @@ const PlaceOrder = () => {
   return (
     <div className='w-screen h-screen bg-white overflow-hidden'>
       <div className='flex h-full'>
-        <div className='w-1/2 p-16 flex flex-col gap-8 overflow-y-auto scrollbar-none ml-0'>
-          <h1 className='font-[Editorial] text-4xl'>Page Turner</h1>
+        <div className='w-[60%] p-16 flex flex-col gap-8 overflow-y-auto ml-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'>
+          <h1 className='font-[Editorial] text-red-600 text-5xl tracking-tighter'>Page Turner</h1>
 
           <div className='font-[SourceSans] bg-neutral-50 p-6 rounded-lg'>
             <div className='flex items-center gap-3'>
@@ -107,54 +89,53 @@ const PlaceOrder = () => {
             </div>
           </div>
 
-          <form onSubmit={onSubmitHandler} className='font-[SourceSans] flex flex-col gap-6 w-[80%] m-auto'>
-            <h2 className='text-2xl font-medium'>Delivery</h2>
+          <form onSubmit={onSubmitHandler} className='font-[Monsterat] flex flex-col gap-6 w-[70%] m-auto'>
+            <h2 className='text-2xl font-medium'>DELIVERY</h2>
             <div className='flex gap-4'>
-              <input required onChange={onChangeHandler} name='firstName' value={formData.firstName} type="text" placeholder='First Name' className='w-1/2 p-4 border-2 border-neutral-200 rounded-lg' />
-              <input required onChange={onChangeHandler} name='lastName' value={formData.lastName} type="text" placeholder='Last Name' className='w-1/2 p-4 border-2 border-neutral-200 rounded-lg' />
+              <input required onChange={onChangeHandler} name='firstName' value={formData.firstName} type="text" placeholder='First Name' className='w-1/2 p-4 bg-neutral-200' />
+
+              <input required onChange={onChangeHandler} name='lastName' value={formData.lastName} type="text" placeholder='Last Name' className='w-1/2 p-4 bg-neutral-200' />
             </div>
-            <input required onChange={onChangeHandler} name='address' value={formData.address} type="text" placeholder='Address' className='w-full p-4 border-2 border-neutral-200 rounded-lg' />
+            <input required onChange={onChangeHandler} name='address' value={formData.address} type="text" placeholder='Address' className='w-full p-4 bg-neutral-200' />
             <div className='flex gap-4'>
-              <input required onChange={onChangeHandler} name='city' value={formData.city} type="text" placeholder='City' className='w-1/3 p-4 border-2 border-neutral-200 rounded-lg' />
-              <input required onChange={onChangeHandler} name='state' value={formData.state} type="text" placeholder='State' className='w-1/3 p-4 border-2 border-neutral-200 rounded-lg' />
-              <input required onChange={onChangeHandler} name='zip' value={formData.zip} type="number" placeholder='ZIP Code' className='w-1/3 p-4 border-2 border-neutral-200 rounded-lg' />
+              <input required onChange={onChangeHandler} name='city' value={formData.city} type="text" placeholder='City' className='w-1/3 p-4 bg-neutral-200' />
+              <input required onChange={onChangeHandler} name='state' value={formData.state} type="text" placeholder='State' className='w-1/3 p-4 bg-neutral-200' />
+              <input required onChange={onChangeHandler} name='zip' value={formData.zip} type="number" placeholder='ZIP Code' className='w-1/3 p-4 bg-neutral-200' />
             </div>
-            <input required onChange={onChangeHandler} name='phone' value={formData.phone} type="number" placeholder='Phone' className='w-full p-4 border-2 border-neutral-200 rounded-lg' />
-            <button type='submit' className='w-[80%] m-auto bg-[#22df04] text-white font-semibold py-4 rounded-lg font-[Monsterat] text-sm hover:bg-[#21df04d0]'>
+            <input required onChange={onChangeHandler} name='phone' value={formData.phone} type="number" placeholder='Phone' className='w-full p-4 bg-neutral-200' />
+            <button type='submit' className='w-full m-auto bg-[#22df04] text-white font-medium py-4 hover:bg-[#21df04d0]'>
               PLACE ORDER
             </button>
           </form>
         </div>
 
-        <div className='w-1/2 bg-[#F5F5F1] p-16 flex flex-col h-full'>
-          <div className='flex-grow'>
+        <div className='w-[40%] bg-[#161616] text-white p-16 flex flex-col h-full font-[Monsterat]'>
+          <div className='flex-grow overflow-y-auto'>
             {cartProducts.map((item, index) => (
-              <div key={index} className='flex gap-4 pb-4 border-b mb-4'>
-                <img 
-                  src={item.image && item.image[0] ? getImageUrl(item.image[0]) : ''} 
-                  alt={item.name} 
-                  className='w-20 h-24 object-cover rounded-lg'
-                />
+              <div key={index} className='flex gap-4 pb-4 border-b border-neutral-800 mb-4'>
+                <div className='w-20 h-20 overflow-hidden flex-shrink-0'>
+                  <img src={item.image && item.image[0] ? item.image[0] : ''} alt={item.name} className='w-full h-full object-contain' />
+                </div>
                 <div className='flex-grow'>
-                  <h3 className='font-[SourceSans] text-lg font-medium'>{item.name}</h3>
-                  <p className='font-[SourceSans] text-neutral-500'>Quantity: {item.quantity}</p>
-                  <p className='font-[SourceSans] font-medium mt-2'>₹{item.price * item.quantity}</p>
+                  <h3 className='text-lg'>{item.name}</h3>
+                  <p className='text-neutral-400'>Quantity: {item.quantity}</p>
+                  <p className='mt-2 text-lg'>₹{item.price * item.quantity}</p>
                 </div>
               </div>
             ))}
           </div>
 
-          <div className='font-[SourceSans]'>
-            <div className='flex justify-between py-4 border-b'>
-              <span className='text-neutral-500'>Subtotal</span>
+          <div className='mt-auto'>
+            <div className='flex justify-between py-4 border-b border-neutral-800'>
+              <span className='text-neutral-300'>SUBTOTAL</span>
               <span className='font-medium'>₹{getCartAmount()}.00</span>
             </div>
-            <div className='flex justify-between py-4 border-b'>
-              <span className='text-neutral-500'>Delivery</span>
+            <div className='flex justify-between py-4 border-b border-neutral-800'>
+              <span className='text-neutral-300'>DELIVERY</span>
               <span className='font-medium'>₹{delivery_fee}.00</span>
             </div>
             <div className='flex justify-between py-4 text-lg font-medium'>
-              <span>Total</span>
+              <span>TOTAL</span>
               <span>₹{getCartAmount() + delivery_fee}.00</span>
             </div>
           </div>

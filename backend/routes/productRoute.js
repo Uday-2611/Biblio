@@ -1,5 +1,5 @@
 import express from 'express';
-import { addProduct, listProducts, removeProduct, singleProduct } from '../controllers/productController.js';
+import { addProduct, listProducts } from '../controllers/productController.js';
 import upload from '../middlewares/multer.js';
 import authMiddleware from '../middlewares/authMiddleware.js';
 
@@ -12,8 +12,6 @@ productRouter.post('/add', authMiddleware, upload.fields([
     { name: 'image4', maxCount: 1 }
 ]), addProduct);
 
-productRouter.post('/remove', authMiddleware, removeProduct);
-productRouter.post('/single', singleProduct);
 productRouter.get('/list', listProducts);
 productRouter.get('/my-products', authMiddleware, listProducts);
 

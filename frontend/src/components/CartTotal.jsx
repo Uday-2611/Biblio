@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 import { ShopContext } from '../context/ShopContext';
 
 const CartTotal = () => {
@@ -15,7 +15,7 @@ const CartTotal = () => {
                 <span>{currency}{delivery_fee}.00</span>
             </div>
             <div className='flex justify-between items-center mt-4 pt-4 border-t text-lg font-medium'>
-                <span>Total</span>
+                <span>TOTAL</span>
                 <span>{currency}{getCartAmount() + delivery_fee}.00</span>
             </div>
         </div>

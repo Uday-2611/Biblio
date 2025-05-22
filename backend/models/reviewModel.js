@@ -21,13 +21,14 @@ const reviewSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    createdAt: {
+    date: {
         type: Date,
         default: Date.now
     }
+}, {
+    timestamps: true
 });
 
-// Prevent multiple reviews from same user for same product
 reviewSchema.index({ productId: 1, userId: 1 }, { unique: true });
 
 const reviewModel = mongoose.model('review', reviewSchema);

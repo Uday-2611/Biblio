@@ -3,13 +3,19 @@ import book1 from './images/book1.jpg'
 import scroller1 from './images/scroller1.jpeg'
 import login from './images/login.jpg'
 import Background from './images/background.jpg'
+import image1 from './images/Image-1.jpg'
+import image2 from './images/Image-2.jpg'
+import image3 from './images/image-3.jpeg'
 // black 070606
 
 export const assets = {
     book1,
     login, 
     Background,
-    scroller1
+    scroller1,
+    image1,
+    image2,
+    image3
 }
 
 

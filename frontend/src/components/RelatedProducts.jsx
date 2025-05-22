@@ -1,31 +1,45 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useContext } from 'react'
 import { ShopContext } from '../context/ShopContext'
-import ProductDisplay from './ProductDisplay';
+import ProductDisplay from './ProductDisplay'
 
 const RelatedProducts = ({ Category, Condition }) => {
-
-    const {products} = useContext(ShopContext);
+    const { products } = useContext(ShopContext);
     const [related, setRelated] = useState([]);
 
-    useEffect (() => {
-        if(products.length > 0) {
+    useEffect(() => {
+        if (products.length > 0) {
             let productsCopy = products.slice();
             productsCopy = productsCopy.filter((item) => Category === item.Category);
-            productsCopy = productsCopy.filter((item) => Condition === item.Condition);
 
-            setRelated(productsCopy.slice(0,5));
+            productsCopy.sort((a, b) => {
+                if (a.Category === b.Category) {
+                    const currentName = productsCopy[0]?.name.toLowerCase() || '';
+                    const nameA = a.name.toLowerCase();
+                    const nameB = b.name.toLowerCase();
+
+                    const wordsA = nameA.split(' ');
+                    const wordsB = nameB.split(' ');
+                    const commonWordsA = wordsA.filter(word => currentName.includes(word)).length;
+                    const commonWordsB = wordsB.filter(word => currentName.includes(word)).length;
+
+                    return commonWordsB - commonWordsA;
+                }
+                return 0;
+            });
+
+            setRelated(productsCopy.slice(0, 4));
         }
-    },[products])
+    }, [products, Category, Condition])
 
     return (
-        <div className='my-24'>
-            <div className='text-center text-3xl py-2'>
-                <h1>Related Products</h1>
+        <div className='my-24 '>
+            <div className='text-3xl py-2 uppercase'>
+                <h1 className='text-[2.5vw] text-white font-[Monsterat] mb-4'>Related Products</h1>
             </div>
-            <div className='flex'>
+            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8'>
                 {related.map((item, index) => (
-                    <ProductDisplay key={index} id={item._id} name = {item.name} price={item.price} image={item.image} />
+                    <ProductDisplay key={item._id || index} name={item.name} price={item.price} image={item.image} id={item._id} />
                 ))}
             </div>
         </div>

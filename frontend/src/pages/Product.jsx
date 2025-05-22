@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import UserReview from '../components/UserReview'
 import { useParams } from 'react-router-dom'
 import { ShopContext } from '../context/ShopContext'
@@ -9,21 +9,18 @@ import axios from 'axios'
 const Product = () => {
   const { productId } = useParams();
   const { products, currency, addToCart, backendUrl, user, requireAuth, token } = useContext(ShopContext);
-  
-  const [quantity, setQuantity] = useState(1);
+
+  const [quantity] = useState(1);
   const [productData, setProductData] = useState(false);
   const [reviews, setReviews] = useState([]);
   const [newReview, setNewReview] = useState('');
   const [rating, setRating] = useState(5);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const getImageUrl = (imagePath) => {
-    return `${backendUrl}/uploads/${imagePath}`;
-  };
+  const [selectedImage, setSelectedImage] = useState(0);
 
   const fetchProductData = async () => {
     products.map((item) => {
-      if(item._id === productId) {
+      if (item._id === productId) {
         setProductData(item);
         return null;
       }
@@ -123,96 +120,105 @@ const Product = () => {
   };
 
   return productData ? (
-    <div className='w-[calc(100%+4vw)] -mx-4 sm:w-[calc(100%+10vw)] sm:-mx-[5vw] md:w-[calc(100%+14vw)] md:-mx-[7vw] lg:w-[calc(100%+4vw)] lg:-mx-[2vw] min-h-screen bg-white'>
+    <div className='w-[calc(100%+4vw)] -mx-4 sm:w-[calc(100%+10vw)] sm:-mx-[5vw] md:w-[calc(100%+14vw)] md:-mx-[7vw] lg:w-[calc(100%+4vw)] lg:-mx-[2vw] min-h-screen '>
       <div className='w-full flex flex-col gap-10 pt-32'>
-        <div className='flex w-[90%] m-auto'>
+        <div className='flex w-[90%] m-auto '>
           <div className='w-1/2 flex justify-center items-center'>
-            <div className='w-[55%] h-[90%] rounded-xl overflow-hidden'>
-              <img src={productData.image && productData.image[0] ? getImageUrl(productData.image[0]) : ''} className='w-full h-full object-cover' alt="Book Cover" />
+            <div className='w-[80%] h-[600px] overflow-hidden flex gap-4'>
+              <div className='flex flex-col h-full w-[25%] gap-4'>
+                {[0, 1].map((index) => (
+                  <div
+                    key={index}
+                    className={`h-[calc(50%-8px)] cursor-pointer ${selectedImage === index ? '' : 'opacity-70 hover:opacity-100'}`}
+                    onClick={() => setSelectedImage(index)}
+                  >
+                    {productData.image && productData.image[index] && (
+                      <img
+                        src={productData.image[index]}
+                        alt={`Thumbnail ${index + 1}`}
+                        className="w-full h-full object-contain"
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              <div className='w-[75%] h-full overflow-hidden '>
+                <img
+                  src={productData.image && productData.image[selectedImage] ? productData.image[selectedImage] : ''}
+                  className='w-full h-full object-contain'
+                  alt="Book Cover"
+                />
+              </div>
             </div>
           </div>
 
-          <div className='w-1/2 flex flex-col justify-center gap-4 font-[SourceSans]'>
-            <h1 className='font-medium text-[4vw]'>{productData.name}</h1>
-            <h2 className='font-medium text-[1.5vw] ml-5'>{productData.author}</h2>
-            <h1 className='font-medium text-[2vw] ml-5'>{currency} {productData.price} </h1>
-            <p className='m-5 text-neutral-600'>{productData.description}</p>
+          <div className='w-1/2 flex flex-col justify-center gap-4 text-white'>
+            <h1 className='font-[Monsterat] uppercase text-[3vw] '>{productData.name}</h1>
+            <h2 className='font-medium text-[1.5vw]'>{productData.author}</h2>
+            <h1 className='font-medium text-[2vw]'>{currency} {productData.price} </h1>
+            <p className='text-[1vw] tracking-tight'>{productData.description}</p>
 
-            <div className='flex flex-col m-5 gap-2'>
-              <div className='flex justify-between gap-2'>
-                <div className='p-4 border-2 border-neutral-200 text-center rounded-xl w-full'>
-                  <h1 className='font-medium'>{productData.Category}</h1>
-                </div>
-                <div className='p-4 border-2 border-neutral-200 text-center rounded-xl w-full'>
-                  <h1 className='font-medium'>{productData.Condition}</h1>
-                </div>
+            <div className='flex flex-col gap-2 w-[70%]'>
+              <div className='py-4 border-b border-neutral-400 w-full'>
+                <h1 className='uppercase text-lg'>{productData.Category}</h1>
+              </div>
+              <div className='py-4 border-b border-neutral-400 w-full'>
+                <h1 className='uppercase text-lg'>{productData.Condition}</h1>
               </div>
 
-              <div className='flex justify-between gap-2'>
-                <div className='p-4 border-2 border-neutral-200 text-center rounded-xl w-full flex items-center justify-between'>
-                  <button
-                    className='text-xl font-medium px-2'
-                    onClick={() => quantity > 1 && setQuantity(quantity - 1)}
-                  >
-                    <i className="ri-subtract-line"></i>
-                  </button>
-                  <span className='font-medium'>{quantity}</span>
-                  <button
-                    className='text-xl font-medium px-2'
-                    onClick={() => setQuantity(quantity + 1)}
-                  >
-                    <i className="ri-add-line"></i>
-                  </button>
-                </div>
-                <button
-                  onClick={() => addToCart(productData._id, quantity)}
-                  className='bg-[#22df04] text-black p-4 rounded-xl font-[Monsterat] text-sm w-full'>
-                  ADD TO CART
-                </button>
-              </div>
+              <button onClick={() => addToCart(productData._id, quantity)} className='bg-white text-black p-4 font-[Monsterat] mt-4 w-full hover:bg-neutral-300'>
+                ADD TO CART
+              </button>
             </div>
           </div>
         </div>
 
-        {/* ------ Review Section ------ */}
-        <div className='flex w-[90%] m-auto gap-10 mb-20'>
-          <div className='w-1/2'>
-            <h1 className='text-[2vw] font-medium font-[SourceSans] mb-4'>Reviews</h1>
-            <form onSubmit={handleSubmitReview} className='mt-2'>
-              {renderStars()}
-              <textarea
-                value={newReview}
-                onChange={(e) => setNewReview(e.target.value)}
-                className='border-2 w-full h-[20vh] rounded-xl border-neutral-200 p-4 font-[Monsterat] placeholder:text-neutral-400'
-                placeholder={user ? 'Write a review' : 'Please login to write a review'}
-                disabled={!user || isSubmitting}
-              />
-              <button
-                type="submit"
-                disabled={!user || isSubmitting}
-                className='mt-4 bg-[#22df04] text-black px-6 py-2 rounded-lg font-[Monsterat] text-sm disabled:opacity-50'
-              >
-                {isSubmitting ? 'Submitting...' : 'Submit Review'}
-              </button>
-            </form>
-          </div>
+        {/* REVIEW SECTION */}
+        <div className='w-[90%] m-auto mb-20 mt-20'>
+          <h1 className='text-[2.5vw] font-[Monsterat] mb-4 text-white'>REVIEWS</h1>
 
-          <div className='w-1/2 flex flex-col gap-4'>
-            {reviews.length === 0 ? (
-              <p className='text-neutral-500 text-center py-8'>No reviews yet</p>
-            ) : (
-              reviews.map((review) => (
-                <UserReview
-                  key={review._id}
-                  review={review}
-                  onDelete={handleDeleteReview}
-                  canDelete={user && user.id === review.userId._id}
+          <div className='flex gap-10'>
+            <div className='w-1/2'>
+              <form onSubmit={handleSubmitReview} className='mt-2'>
+                {renderStars()}
+                <textarea 
+                  value={newReview} 
+                  onChange={(e) => setNewReview(e.target.value)} 
+                  className='w-full h-[20vh] rounded-sm bg-neutral-900 p-4 font-[Monsterat] placeholder:text-neutral-400' 
+                  placeholder={user ? 'Write a review......' : 'Please login to write a review'} 
+                  disabled={!user || isSubmitting} 
                 />
-              ))
-            )}
-          </div>
 
-          {/* ------ Related Products ------ */}
+                <button 
+                  type="submit" 
+                  disabled={!user || isSubmitting} 
+                  className='mt-4 bg-white text-black px-6 py-2 uppercase font-[Monsterat] text-sm disabled:opacity-50'
+                >
+                  {isSubmitting ? 'Submitting...' : 'Submit Review'}
+                </button>
+              </form>
+            </div>
+
+            <div className='w-1/2 flex flex-col gap-4 mt-14'>
+              {reviews.length === 0 ? (
+                <p className='text-neutral-500 text-center py-8'>No reviews yet</p>
+              ) : (
+                reviews.map((review) => (
+                  <UserReview 
+                    key={review._id} 
+                    review={review} 
+                    onDelete={handleDeleteReview} 
+                    canDelete={user && user.id === review.userId._id} 
+                  />
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* RELATED PRODUCTS */}
+        <div className='m-auto w-[90%]'>
           <RelatedProducts Category={productData.Category} Condition={productData.Condition} />
         </div>
       </div>

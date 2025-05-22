@@ -1,30 +1,34 @@
-import React, { useState, useContext } from 'react';
+import { useState, useContext } from 'react';
 import { ShopContext } from '../context/ShopContext';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import Sidebar from '../components/Sidebar';
 import Button from '../components/common/Button';
 
-const Sell = () => {
+const SellProduct = () => {
   const { backendUrl, token, navigate, requireAuth, fetchProducts } = useContext(ShopContext);
   const [newBook, setNewBook] = useState({
     name: '',
     author: '',
     description: '',
     Condition: 'new',
-    Category: '',  // Changed from genre to match backend
+    Category: '',
     price: '',
-    images: {
-      image1: null,
-      image2: null,
-      image3: null,
-      image4: null
-    }
+    images: { image1: null, image2: null }
   });
 
   const handleImageUpload = (e) => {
     const { name, files } = e.target;
     if (files[0]) {
+      if (!files[0].type.startsWith('image/')) {
+        toast.error('Please upload only image files');
+        return;
+      }
+      
+      if (files[0].size > 5 * 1024 * 1024) {
+        toast.error('Image size should be less than 5MB');
+        return;
+      }
+
       const imageUrl = URL.createObjectURL(files[0]);
       setNewBook(prev => ({
         ...prev,
@@ -35,6 +39,17 @@ const Sell = () => {
         }
       }));
     }
+  };
+
+  const removeImage = (imageName) => {
+    setNewBook(prev => ({
+      ...prev,
+      images: {
+        ...prev.images,
+        [imageName]: null,
+        [`${imageName}Preview`]: null
+      }
+    }));
   };
 
   const handleInputChange = (e) => {
@@ -50,17 +65,23 @@ const Sell = () => {
     if (!requireAuth()) {
       return;
     }
+
+    const hasImages = Object.values(newBook.images).some(img => img !== null);
+    if (!hasImages) {
+      toast.error('Please upload at least one image');
+      return;
+    }
+
     try {
       const formData = new FormData();
       formData.append('name', newBook.name);
-      formData.append('author', newBook.author);  // Add author field
+      formData.append('author', newBook.author);
       formData.append('description', newBook.description);
       formData.append('Category', newBook.Category);
       formData.append('Condition', newBook.Condition);
       formData.append('price', newBook.price);
-      formData.append('date', Date.now());  // Add date field required by backend
-      
-      // Append available images
+      formData.append('date', Date.now());
+
       Object.entries(newBook.images).forEach(([key, file]) => {
         if (file && !key.includes('Preview')) formData.append(key, file);
       });
@@ -68,12 +89,12 @@ const Sell = () => {
       const response = await axios.post(backendUrl + '/api/product/add', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
-          'token': token  // Change this line
+          'token': token
         }
       });
 
       if (response.data.success) {
-        await fetchProducts(); // Add this line to refresh products
+        await fetchProducts();
         toast.success('Product listed successfully!');
         navigate('/collection');
       } else {
@@ -85,136 +106,81 @@ const Sell = () => {
     }
   };
 
-  // Fix the price input section structure
   return (
-    <div className='flex w-screen min-h-screen bg-white'>
-      <Sidebar />
-      <main className='flex-1 pl-64'>
-        <div className='max-w-[1200px] w-full mx-auto px-6 py-8 pt-24'>
-          <div className='flex flex-col gap-6'>
-            <h1 className='font-["SourceSans"] text-4xl font-medium'>Add New Item</h1>
-            <form onSubmit={handleSubmit} className='flex flex-col gap-6 max-w-2xl'>
-              <div className='grid grid-cols-2 gap-4'>
-                {[1, 2, 3, 4].map(num => (
-                  <div key={num} className='relative w-full aspect-square border-2 border-dashed rounded-xl flex items-center justify-center bg-neutral-50'>
-                    <input 
-                      type="file" 
-                      name={`image${num}`}
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      className='absolute inset-0 opacity-0 cursor-pointer'
-                    />
-                    {newBook.images[`image${num}Preview`] ? (
-                      <img 
-                        src={newBook.images[`image${num}Preview`]} 
-                        alt={`Preview ${num}`} 
-                        className="w-full h-full object-cover rounded-xl"
-                      />
-                    ) : (
-                      <div className='flex flex-col items-center gap-2 text-neutral-400'>
-                        <i className="ri-upload-cloud-2-line text-4xl"></i>
-                        <span>Image {num}</span>
-                      </div>
-                    )}
+    <div className='p-8 mt-20'>
+      <div className='flex flex-col gap-6'>
+        <h1 className='font-["Monsterat"] text-5xl font-medium'>ADD NEW ITEM</h1>
+        <form onSubmit={handleSubmit} className='flex flex-col gap-6 max-w-2xl'>
+          <div className='grid grid-cols-2 gap-4'>
+            {[1, 2].map(num => (
+              <div key={num} className='relative w-full aspect-square rounded-sm flex items-center justify-center bg-neutral-100'>
+                <input type="file" name={`image${num}`} accept="image/*" onChange={handleImageUpload} className='absolute inset-0 opacity-0 cursor-pointer'/>
+                {newBook.images[`image${num}Preview`] ? (
+                  <div className="relative w-full h-full">
+                    <img src={newBook.images[`image${num}Preview`]} alt={`Preview ${num}`} className="w-full h-full object-cover rounded-xl"/>
+                    <button type="button" onClick={() => removeImage(`image${num}`)} className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full hover:bg-red-600">
+                      <i className="ri-close-line"></i>
+                    </button>
                   </div>
-                ))}
+                ) : (
+                  <div className='flex flex-col items-center gap-2 text-neutral-400'>
+                    <i className="ri-upload-cloud-2-line text-4xl"></i>
+                    <span>Image {num}</span>
+                  </div>
+                )}
               </div>
-  
-              <div className='flex flex-col gap-2'>
-                <label className='text-neutral-500'>Book Name</label>
-                <input 
-                  type="text"
-                  name="name"
-                  value={newBook.name}
-                  onChange={handleInputChange}
-                  className='border p-2 rounded-lg'
-                  required
-                />
-              </div>
-  
-              <div className='flex flex-col gap-2'>
-                <label className='text-neutral-500'>Author's Name</label>
-                <input 
-                  type="text"
-                  name="author"
-                  value={newBook.author}
-                  onChange={handleInputChange}
-                  className='border p-2 rounded-lg'
-                  required
-                />
-              </div>
-  
-              <div className='flex gap-4'>
-                <div className='flex flex-col gap-2 w-1/2'>
-                  <label className='text-neutral-500'>Condition</label>
-                  <select 
-                    name="Condition"
-                    value={newBook.Condition}
-                    onChange={handleInputChange}
-                    className='border p-2 rounded-lg'
-                    required
-                  >
-                    <option value="new">New</option>
-                    <option value="like-new">Like New</option>
-                    <option value="good">Good</option>
-                    <option value="fair">Fair</option>
-                  </select>
-                </div>
-  
-                <div className='flex flex-col gap-2 w-1/2'>
-                  <label className='text-neutral-500'>Category</label>
-                  <select 
-                    name="Category"
-                    value={newBook.Category}
-                    onChange={handleInputChange}
-                    className='border p-2 rounded-lg'
-                    required
-                  >
-                    <option value="">Select Category</option>
-                    <option value="fiction">Fiction</option>
-                    <option value="non-fiction">Non-Fiction</option>
-                    <option value="academic">Academic</option>
-                  </select>
-                </div>
-              </div>
-  
-              <div className='flex flex-col gap-2'>
-                <label className='text-neutral-500'>Description</label>
-                <textarea 
-                  name="description"
-                  value={newBook.description}
-                  onChange={handleInputChange}
-                  className='border p-2 rounded-lg min-h-[100px]'
-                  required
-                />
-              </div>
-  
-              <div className='flex flex-col gap-2'>
-                <label className='text-neutral-500'>Price (₹)</label>
-                <input 
-                  type="number"
-                  name="price"
-                  value={newBook.price}
-                  onChange={handleInputChange}
-                  className='border p-2 rounded-lg'
-                  required
-                />
-              </div>
-  
-              <Button 
-                type="submit"
-                variant="primary"
-                className="mt-4"
-              >
-                ADD ITEM
-              </Button>
-            </form>
+            ))}
           </div>
-          <hr className='my-8' />
-        </div>
-      </main>
+
+          <div className='flex flex-col gap-2 text-black font-[Monsterat]'>
+            <label>NAME</label>
+            <input type="text" name="name" value={newBook.name} onChange={handleInputChange} className='bg-neutral-100 p-2 rounded-sm' placeholder='Enter Book Name' />
+          </div>
+
+          <div className='flex flex-col gap-2 text-black font-[Monsterat]'>
+            <label>AUTHOR</label>
+            <input type="text" name="author" value={newBook.author} onChange={handleInputChange} className='bg-neutral-100 p-2 rounded-sm' required placeholder="Enter Author's Name" />
+          </div>
+
+          <div className='flex gap-4 text-black font-[Monsterat]'>
+            <div className='flex flex-col gap-2 w-1/2'>
+              <label>CONDITION</label>
+              <select name="Condition" value={newBook.Condition} onChange={handleInputChange} className='bg-neutral-100 p-2 rounded-sm' required >
+                <option value="New">New</option>
+                <option value="Like-New">Like New</option>
+                <option value="Good">Good</option>
+                <option value="Fair">Fair</option>
+              </select>
+            </div>
+
+            <div className='flex flex-col gap-2 w-1/2 text-black font-[Monsterat]'>
+              <label>CATEGORY</label>
+              <select name="Category" value={newBook.Category} onChange={handleInputChange} className='bg-neutral-100 p-2 rounded-sm' required>
+                <option value="">Select Category</option>
+                <option value="Fiction">Fiction</option>
+                <option value="Non-Fiction">Non-Fiction</option>
+                <option value="Academic">Academic</option>
+              </select>
+            </div>
+          </div>
+
+          <div className='flex flex-col gap-2 text-black font-[Monsterat]'>
+            <label>DESCRIPTION</label>
+            <textarea name="description" value={newBook.description} onChange={handleInputChange} className='bg-neutral-100 p-2 rounded-sm min-h-[100px]' required />
+          </div>
+
+          <div className='flex flex-col gap-2 text-black font-[Monsterat]'>
+            <label >PRICE</label>
+            <input type="number" name="price" value={newBook.price} onChange={handleInputChange} className='bg-neutral-100 p-2 rounded-sm ' required />
+          </div>
+
+          <Button type="submit" variant="primary" className="mt-4" >
+            ADD ITEM
+          </Button>
+        </form>
+      </div>
     </div>
   );
 };
 
-export default Sell;
+export default SellProduct;

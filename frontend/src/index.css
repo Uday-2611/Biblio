@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
 body {
-    background-color: #d7cdb8;
+    background-color: #111;
+}
+
+::-webkit-scrollbar {
+    display: none;
+}
+
+* {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }

@@ -1,6 +1,4 @@
 import React, { useState, useEffect, useContext } from 'react'
-import Sidebar from '../components/Sidebar'
-import { Link } from 'react-router-dom'
 import { ShopContext } from '../context/ShopContext';
 import axios from 'axios';
 
@@ -31,51 +29,42 @@ const ListProduct = () => {
   }, [token]);
 
   return (
-    <div className='flex w-screen min-h-screen bg-white'>
-      <Sidebar />
-      <main className='flex-1 pl-64'>
-        <div className='w-full max-w-[1200px] mx-auto px-6 py-8 pt-24'>
-          <div className='flex justify-between items-center mb-8'>
-            <h1 className='text-3xl font-[Editorial]'>My Sales History</h1>
-            <Link 
-              to="/sell"
-              className='bg-[#22df04] text-white px-6 py-2 rounded-lg hover:bg-[#1ec703] transition-colors'
-            >
-              + Sell New Book
-            </Link>
-          </div>
-          <div className='overflow-x-auto'>
-            {loading ? (
-              <div className="text-center py-8">Loading products...</div>
-            ) : products.length === 0 ? (
-              <div className="text-center py-8">No products listed yet</div>
-            ) : (
-              <table className='w-full'>
-                <thead className='bg-neutral-50'>
-                  <tr>
-                    <th className='p-4 text-left'>Product</th>
-                    <th className='p-4 text-left'>Price</th>
-                    <th className='p-4 text-left'>Category</th>
-                    <th className='p-4 text-left'>Condition</th>
-                    <th className='p-4 text-left'>Listed Date</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {products.map(product => (
-                    <tr key={product._id} className='border-b'>
-                      <td className='p-4'>{product.name}</td>
-                      <td className='p-4'>₹{product.price}</td>
-                      <td className='p-4'>{product.Category}</td>
-                      <td className='p-4'>{product.Condition}</td>
-                      <td className='p-4'>{new Date(product.date).toLocaleDateString()}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
-          </div>
+    <div className='w-full min-h-screen'>
+      <div className='w-[90%] m-auto pt-32'>
+        <div className='flex justify-between items-center mb-8'>
+          <h1 className='font-["Monsterat"] text-5xl font-medium'>SALES HISTORY</h1>
         </div>
-      </main>
+        <div className='overflow-x-auto'>
+          {loading ? (
+            <div className="text-center py-8">Loading products...</div>
+          ) : products.length === 0 ? (
+            <div className="text-center py-8">No products listed yet</div>
+          ) : (
+            <table className='w-full'>
+              <thead className='bg-neutral-100'>
+                <tr className='flex justify-between items-center'>
+                  <th className='p-4 text-left w-[300px]'>PRODUCT</th>
+                  <th className='p-4 text-left w-[100px]'>PRICE</th>
+                  <th className='p-4 text-left w-[150px]'>CATEGORY</th>
+                  <th className='p-4 text-left w-[150px]'>CONDITION</th>
+                  <th className='p-4 text-left w-[150px]'>DATE</th>
+                </tr>
+              </thead>
+              <tbody>
+                {products.map(product => (
+                  <tr key={product._id} className='border-b flex justify-between items-center'>
+                    <td className='p-4 w-[300px]'>{product.name}</td>
+                    <td className='p-4 w-[100px]'>${product.price}</td>
+                    <td className='p-4 w-[150px]'>{product.Category}</td>
+                    <td className='p-4 w-[150px]'>{product.Condition}</td>
+                    <td className='p-4 w-[150px]'>{new Date(product.date).toLocaleDateString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+      </div>
     </div>
   )
 }

@@ -4,7 +4,6 @@ import userModel from '../models/userModel.js';
 const authMiddleware = async (req, res, next) => {
     try {
         const token = req.headers.token;
-        console.log('Received token:', token); // Add this line
         
         if (!token) {
             return res.status(401).json({
@@ -13,12 +12,10 @@ const authMiddleware = async (req, res, next) => {
             });
         }
 
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        console.log('Decoded token:', decoded); // Add this line
+        const decoded = jwt.verify(token, process.env.JWT_SECRET); 
         
         const user = await userModel.findById(decoded.id);
-        console.log('Found user:', user); // Add this line
-
+        
         if (!user) {
             return res.status(401).json({
                 success: false,
@@ -36,7 +33,7 @@ const authMiddleware = async (req, res, next) => {
         req.user = user;
         next();
     } catch (error) {
-        console.log('Auth error:', error); // Add this line
+        console.log('Auth error:', error); 
         if (error.name === 'JsonWebTokenError') {
             return res.status(401).json({
                 success: false,

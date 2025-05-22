@@ -1,140 +1,93 @@
 import reviewModel from "../models/reviewModel.js";
+import userModel from "../models/userModel.js";
 
-// Add a new review
-const addReview = async (req, res) => {
+// Add a new review ->
+export const addReview = async (req, res) => {
     try {
         const { productId, rating, review } = req.body;
-        const userId = req.body.userId; // From auth middleware
+        const userId = req.user.id;
 
         const newReview = new reviewModel({
             productId,
             userId,
             rating,
-            review
+            review,
+            date: new Date()
         });
 
         await newReview.save();
 
-        // Fetch the complete review with user details
         const populatedReview = await reviewModel.findById(newReview._id)
-            .populate('userId', 'name')
-            .exec();
+            .populate('userId', 'name');
 
-        res.json({
+        res.status(201).json({
             success: true,
-            message: 'Review added successfully',
+            message: "Review added successfully",
             review: populatedReview
         });
-
     } catch (error) {
-        // Check for duplicate review error
         if (error.code === 11000) {
-            return res.json({
+            return res.status(400).json({
                 success: false,
-                message: 'You have already reviewed this product'
+                message: "You have already reviewed this product"
             });
         }
-        console.log(error);
-        res.json({
+        res.status(500).json({
             success: false,
-            message: error.message
+            message: "Error adding review",
+            error: error.message
         });
     }
 };
 
-// Get reviews for a product
-const getProductReviews = async (req, res) => {
+// Get product reviews ->
+export const getProductReviews = async (req, res) => {
     try {
         const { productId } = req.params;
-        
         const reviews = await reviewModel.find({ productId })
             .populate('userId', 'name')
-            .sort({ createdAt: -1 })
-            .exec();
+            .sort({ date: -1 });
 
-        res.json({
+        res.status(200).json({
             success: true,
             reviews
         });
-
     } catch (error) {
-        console.log(error);
-        res.json({
+        res.status(500).json({
             success: false,
-            message: error.message
+            message: "Error fetching reviews",
+            error: error.message
         });
     }
 };
 
-// Update a review
-const updateReview = async (req, res) => {
-    try {
-        const { reviewId, rating, review } = req.body;
-        const userId = req.body.userId;
-
-        const updatedReview = await reviewModel.findOneAndUpdate(
-            { _id: reviewId, userId },
-            { rating, review },
-            { new: true }
-        ).populate('userId', 'name');
-
-        if (!updatedReview) {
-            return res.json({
-                success: false,
-                message: 'Review not found or unauthorized'
-            });
-        }
-
-        res.json({
-            success: true,
-            message: 'Review updated successfully',
-            review: updatedReview
-        });
-
-    } catch (error) {
-        console.log(error);
-        res.json({
-            success: false,
-            message: error.message
-        });
-    }
-};
-
-// Delete a review
-const deleteReview = async (req, res) => {
+// Delete a review ->
+export const deleteReview = async (req, res) => {
     try {
         const { reviewId } = req.params;
-        const userId = req.body.userId;
+        const userId = req.user.id;
 
-        const deletedReview = await reviewModel.findOneAndDelete({
+        const review = await reviewModel.findOneAndDelete({
             _id: reviewId,
             userId
         });
 
-        if (!deletedReview) {
-            return res.json({
+        if (!review) {
+            return res.status(404).json({
                 success: false,
-                message: 'Review not found or unauthorized'
+                message: "Review not found or unauthorized"
             });
         }
 
-        res.json({
+        res.status(200).json({
             success: true,
-            message: 'Review deleted successfully'
+            message: "Review deleted successfully"
         });
-
     } catch (error) {
-        console.log(error);
-        res.json({
+        res.status(500).json({
             success: false,
-            message: error.message
+            message: "Error deleting review",
+            error: error.message
         });
     }
-};
-
-export {
-    addReview,
-    getProductReviews,
-    updateReview,
-    deleteReview
 };

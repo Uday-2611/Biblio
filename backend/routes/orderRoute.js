@@ -5,14 +5,14 @@ import { placeOrder, allOrders, userOrders, updateStatus } from '../controllers/
 
 const orderRouter = express.Router();
 
-// Admin/Seller Features
+// Admin/Seller ->
 orderRouter.get('/list', authMiddleware, allOrders);
 orderRouter.post('/status', authMiddleware, updateStatus);
 
-// Payment Features
+// Payment ->
 orderRouter.post('/place', authUser, placeOrder);
 
-// User Features
+// User ->
 orderRouter.post('/userorders', authUser, userOrders);
 
 export default orderRouter;

@@ -1,83 +1,140 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useContext } from 'react'
 import { ShopContext } from '../context/ShopContext'
 import ProductDisplay from '../components/ProductDisplay';
-import SearchBar from '../components/SearchBar';
 
 const Collection = () => {
-  const { setShowSearch, fetchProducts } = useContext(ShopContext);
-  const { products, search, showSearch, user } = useContext(ShopContext);
+  const { setShowSearch, fetchProducts, products, showSearch, user } = useContext(ShopContext);
+  const [localSearch, setLocalSearch] = useState('');
+  const searchInputRef = useRef(null);
+
   const [filterProducts, setFilterProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [Category, setCategory] = useState([])
   const [Condition, setCondition] = useState([])
   const [sortType, setSortType] = useState('relevant')
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+  const [isConditionOpen, setIsConditionOpen] = useState(false);
+  const [tempCategory, setTempCategory] = useState([]);
+  const [tempCondition, setTempCondition] = useState([]);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
+  const dropdownRef = useRef(null);
+  const filterSidebarRef = useRef(null);
+
+  // Category ->
   const toggleCategory = (e) => {
-    if (Category.includes(e.target.value)) {
-      setCategory(prev => prev.filter(item => item !== e.target.value))
+    if (tempCategory.includes(e.target.value)) {
+      setTempCategory(prev => prev.filter(item => item !== e.target.value))
     } else {
-      setCategory(prev => [...prev, e.target.value])
+      setTempCategory(prev => [...prev, e.target.value])
     }
   }
 
+  // Condition ->
   const toggleCondition = (e) => {
-    if (Condition.includes(e.target.value)) {
-      setCondition(prev => prev.filter(item => item !== e.target.value))
+    if (tempCondition.includes(e.target.value)) {
+      setTempCondition(prev => prev.filter(item => item !== e.target.value))
     } else {
-      setCondition(prev => [...prev, e.target.value])
+      setTempCondition(prev => [...prev, e.target.value])
     }
   }
 
-  const applyFilter = () => {
-    let productsCopy = products.slice();
+  // Search ->
+  const handleSearch = (e) => {
+    const value = e.target.value;
+    setLocalSearch(value);
+    setShowSearch(true);
+    // Update the search in the context
+    if (value.trim() === '') {
+      setShowSearch(false);
+    }
+  }
 
-    // Filter out current user's products by comparing with user._id from context
+  const handleSearchClose = () => {
+    setLocalSearch('');
+    setShowSearch(false);
+  }
+
+  useEffect(() => {
+    if (showSearch && searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  }, [showSearch]);
+
+  // Applying filters -> 
+  const applyFilter = () => {
+    let productsCopy = [...products];
+
     if (user && user.id) {
       productsCopy = productsCopy.filter(item => item.sellerId !== user.id);
     }
-
-    if(showSearch && search) {
-      productsCopy = productsCopy.filter(item => item.name.toLowerCase().includes(search.toLowerCase()));
+    if (showSearch && localSearch) {
+      productsCopy = productsCopy.filter(item => 
+        item.name.toLowerCase().includes(localSearch.toLowerCase())
+      );
     }
-
     if (Category.length > 0) {
       productsCopy = productsCopy.filter(item => Category.includes(item.Category));
     }
-
     if (Condition.length > 0) {
       productsCopy = productsCopy.filter(item => Condition.includes(item.Condition));
+    }
+
+    // Applying sorting ------>
+    if (sortType === 'low-high') {
+      productsCopy.sort((a, b) => Number(a.price) - Number(b.price));
+    } else if (sortType === 'high-low') {
+      productsCopy.sort((a, b) => Number(b.price) - Number(a.price));
     }
 
     setFilterProducts(productsCopy);
   }
 
-  const sortProducts = () => {
-    let fpCopy = filterProducts.slice();
+  const handleSortChange = (newSortType) => {
+    setSortType(newSortType);
+    setIsDropdownOpen(false);
+  }
 
-    switch (sortType) {
-      case 'low-high':
-        setFilterProducts(fpCopy.sort((a, b) => (a.price - b.price)));
-        break;
+  const handleApplyFilters = () => {
+    setCategory(tempCategory);
+    setCondition(tempCondition);
+    setIsFilterOpen(false);
+  }
 
-      case 'high-low':
-        setFilterProducts(fpCopy.sort((a, b) => (b.price - a.price)));
-        break;
-
-      default:
-        applyFilter();
-        break;
-    }
+  const handleClearFilters = () => {
+    setTempCategory([]);
+    setTempCondition([]);
+    setCategory([]);
+    setCondition([]);
   }
 
   useEffect(() => {
-    applyFilter();
-  }, [Category, Condition, search, showSearch, products])
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   useEffect(() => {
-    sortProducts();
-  }, [sortType])
+    const handleClickOutside = (event) => {
+      if (filterSidebarRef.current && !filterSidebarRef.current.contains(event.target)) {
+        setIsFilterOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    applyFilter();
+  }, [Category, Condition, localSearch, showSearch, products, sortType])
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -89,137 +146,165 @@ const Collection = () => {
   }, []);
 
   useEffect(() => {
-    // Prevent scrolling when filter is open
     if (isFilterOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.classList.add('overflow-hidden');
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.classList.remove('overflow-hidden');
     }
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
+    return () => document.body.classList.remove('overflow-hidden');
   }, [isFilterOpen]);
 
   return (
-    <div className='w-[calc(100%+4vw)] -mx-4 sm:w-[calc(100%+10vw)] sm:-mx-[5vw] md:w-[calc(100%+14vw)] md:-mx-[7vw] lg:w-[calc(100%+4vw)] lg:-mx-[2vw] object-cover overflow-x-hidden m-auto bg-white min-h-screen'>
-      <div className='mt-32 w-full px-10'>
+    <div className=''>
+      <div className='mt-32 w-full'>
         <div className='flex justify-between items-center'>
-          <h1 className='font-[SourceSans] text-5xl'>Products</h1>
-          
-          <div className='flex items-center gap-4'>
-            <button 
-              onClick={() => setShowSearch(true)} 
-              className='text-2xl hover:text-gray-600 transition-colors'
-            >
+          <h1 className='font-[Monsterat] text-white uppercase font-medium text-5xl'>VIEW ALL</h1>
+
+          <div className='flex items-center'>
+
+            {/* SEARCH BAR -> */}
+            <div className={`relative transition-all duration-300 ease-in-out ${ showSearch ? 'w-64 opacity-100' : 'w-0 opacity-0' }`}>
+
+              <input ref={searchInputRef} type="text" value={localSearch} onChange={handleSearch} placeholder="Search products..." className="w-full bg-transparent border-b border-white text-white placeholder-gray-400 focus:outline-none focus:border-neutral-300 transition-colors duration-200 py-2" />
+              
+              <button onClick={handleSearchClose} className="absolute right-0 top-1/2 -translate-y-1/2 text-white hover:text-neutral-300" aria-label="Close search" >
+                <i className="ri-close-line"></i>
+              </button>
+            </div>
+
+            <button onClick={() => setShowSearch(true)} className={`text-white hover:text-neutral-300 transition-opacity duration-300 ${ showSearch ? 'opacity-0 pointer-events-none' : 'opacity-100' }`} aria-label="Search" >
               <i className="ri-search-line"></i>
             </button>
-            
-            <button 
-              onClick={() => setIsFilterOpen(!isFilterOpen)} 
-              className='border-2 text-black px-6 py-2 border-neutral-300 rounded-full font-[SourceSans] text-sm hover:bg-neutral-100 transition-colors'
-            >
-              {isFilterOpen ? 'CLOSE FILTERS' : 'APPLY FILTERS'}
+
+            <button onClick={() => setIsFilterOpen(!isFilterOpen)} className='text-white px-6 py-2 font-[Monsterat] hover:text-neutral-300' aria-label="Open filters" >
+              FILTER
             </button>
-            
-            <select 
-              onChange={(e) => setSortType(e.target.value)} 
-              className='border-2 text-sm px-4 py-2 rounded-full bg-white'
-            >
-              <option value="relevant">Sort by Relevance</option>
-              <option value="low-high">Sort by Low-High</option>
-              <option value="high-low">Sort by High-Low</option>
-            </select>
+
+            {/* DROPDOWN -> */}
+            <div className="relative" ref={dropdownRef}>
+              <button onClick={() => setIsDropdownOpen(!isDropdownOpen)} className="font-[Monsterat] text-white hover:text-neutral-300 flex items-center gap-2" aria-label="Sort options" aria-expanded={isDropdownOpen} >
+                {sortType === 'relevant' ? 'SORT' : sortType === 'low-high' ? 'LOW-HIGH' : sortType === 'high-low' ? 'HIGH-LOW' : 'SORT'}
+                <i className={`ri-arrow-down-s-line transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`}></i>
+              </button>
+
+              <div className={`absolute right-0 mt-2 w-48 bg-white shadow-lg transform transition-all duration-300 origin-top-right ${isDropdownOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0 pointer-events-none'}`} role="menu" aria-orientation="vertical" aria-labelledby="sort-menu" >
+                <ul className="py-2">
+                  <li key="relevant">
+                    <button onClick={() => handleSortChange('relevant')} className="w-full px-4 py-3 text-left text-black  hover:text-neutral-600 flex items-center gap-3" role="menuitem" >
+                      <span className={`w-4 h-4 border-2 border-black rounded-full ${sortType === 'relevant' ? 'bg-black' : ''}`}></span>
+                      RELEVANT
+                    </button>
+                  </li>
+                  <li key="low-high">
+                    <button onClick={() => handleSortChange('low-high')} className="w-full px-4 py-3 text-left text-black  hover:text-neutral-600 flex items-center gap-3" role="menuitem" >
+                      <span className={`w-4 h-4 border-2 border-black rounded-full ${sortType === 'low-high' ? 'bg-black' : ''}`}></span>
+                      LOW-HIGH
+                    </button>
+                  </li>
+                  <li key="high-low">
+                    <button onClick={() => handleSortChange('high-low')} className="w-full px-4 py-3 text-left text-black  hover:text-neutral-600 flex items-center gap-3" role="menuitem" >
+                      <span className={`w-4 h-4 border-2 border-black rounded-full ${sortType === 'high-low' ? 'bg-black' : ''}`}></span>
+                      HIGH-LOW
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      <SearchBar />
+      {/* OVERLAY -> */}
+      <div className={`fixed inset-0 bg-black transition-opacity duration-300 z-40 ${isFilterOpen ? 'opacity-50' : 'opacity-0 pointer-events-none'}`} onClick={() => setIsFilterOpen(false)} aria-hidden="true" />
 
-      {/* Overlay */}
-      <div 
-        className={`fixed inset-0 bg-black transition-opacity duration-300 z-40 ${
-          isFilterOpen ? 'opacity-50' : 'opacity-0 pointer-events-none'
-        }`}
-        onClick={() => setIsFilterOpen(false)}
-      />
-
-      {/* Filter Sidebar */}
-      <div className={`fixed right-0 top-0 h-screen w-[300px] bg-white shadow-2xl transform transition-transform duration-300 ease-in-out z-50 ${
-        isFilterOpen ? 'translate-x-0' : 'translate-x-full'
-      }`}>
-        <div className='p-6'>
-          <div className='flex justify-between items-center mb-6'>
-            <h1 className='font-medium text-xl'>Filters</h1>
-            <button 
-              onClick={() => setIsFilterOpen(false)}
-              className='text-neutral-400 hover:text-neutral-600'
-            >
+      {/* FILTER SIDEBAR -> */}
+      <div ref={filterSidebarRef} className={`fixed right-0 top-0 h-screen w-[30vw] bg-white shadow-2xl transform transition-transform duration-300 ease-in-out z-50 ${isFilterOpen ? 'translate-x-0' : 'translate-x-full'}`} >
+        <div className='p-6 h-full flex flex-col'>
+          <div className='flex relative items-center mb-6'>
+            <h1 className='w-[100%] text-center font-[Monsterat]'>FILTERS</h1>
+            <button onClick={() => setIsFilterOpen(false)} className='hover:text-neutral-600 absolute right-0' aria-label="Close filters" >
               <i className="ri-close-line text-xl"></i>
             </button>
           </div>
 
-          {/* Category Filter */}
-          <div className='mb-8'>
-            <p className='mb-3 text-sm font-medium'>CATEGORIES</p>
-            <div className='flex flex-col gap-2 text-sm font-light text-gray-700'>
-              <label className='flex items-center gap-2 cursor-pointer'>
-                <input className='w-4 h-4' type="checkbox" value={'fiction'} onChange={toggleCategory} />
-                Fiction
-              </label>
-              <label className='flex items-center gap-2 cursor-pointer'>
-                <input className='w-4 h-4' type="checkbox" value={'non-fiction'} onChange={toggleCategory} />
-                Non-Fiction
-              </label>
-              <label className='flex items-center gap-2 cursor-pointer'>
-                <input className='w-4 h-4' type="checkbox" value={'academic'} onChange={toggleCategory} />
-                Academic
-              </label>
+          {/* CATEGORY -> */}
+          <div className='mb-8 font-[Monsterat] mt-10'>
+            <button onClick={() => setIsCategoryOpen(!isCategoryOpen)} className='flex justify-between items-center w-full mb-3 text-xl font-medium' aria-expanded={isCategoryOpen} >
+              <span>CATEGORIES</span>
+              <i className={`ri-arrow-down-s-line transition-transform duration-300 ${isCategoryOpen ? 'rotate-180' : ''}`}></i>
+            </button>
+            <div className={`overflow-hidden transition-all duration-300 ${isCategoryOpen ? 'max-h-48' : 'max-h-0'}`}>
+              <div className='flex flex-col gap-2 text-sm font-light text-gray-700'>
+                <label className='flex items-center gap-2 cursor-pointer'>
+                  <input className='w-4 h-4' type="checkbox" value={'fiction'} onChange={toggleCategory} checked={tempCategory.includes('fiction')} aria-label="Fiction category" />
+                  Fiction
+                </label>
+                <label className='flex items-center gap-2 cursor-pointer'>
+                  <input className='w-4 h-4' type="checkbox" value={'non-fiction'} onChange={toggleCategory} checked={tempCategory.includes('non-fiction')} aria-label="Non-fiction category" />
+                  Non-Fiction
+                </label>
+                <label className='flex items-center gap-2 cursor-pointer'>
+                  <input className='w-4 h-4' type="checkbox" value={'academic'} onChange={toggleCategory} checked={tempCategory.includes('academic')} aria-label="Academic category" />
+                  Academic
+                </label>
+              </div>
             </div>
           </div>
 
-          {/* Condition */}
-          <div className='mb-8'>
-            <p className='mb-3 text-sm font-medium'>CONDITION</p>
-            <div className='flex flex-col gap-2 text-sm font-light text-gray-700'>
-              <label className='flex items-center gap-2 cursor-pointer'>
-                <input className='w-4 h-4' type="checkbox" value="new" onChange={toggleCondition} />
-                New
-              </label>
-              <label className='flex items-center gap-2 cursor-pointer'>
-                <input className='w-4 h-4' type="checkbox" value="like-new" onChange={toggleCondition} />
-                Like New
-              </label>
-              <label className='flex items-center gap-2 cursor-pointer'>
-                <input className='w-4 h-4' type="checkbox" value="good" onChange={toggleCondition} />
-                Good
-              </label>
-              <label className='flex items-center gap-2 cursor-pointer'>
-                <input className='w-4 h-4' type="checkbox" value="fair" onChange={toggleCondition} />
-                Fair
-              </label>
+          {/* CONDITION -> */}
+          <div className='mb-8 font-[Monsterat]'>
+            <button onClick={() => setIsConditionOpen(!isConditionOpen)} className='flex justify-between items-center w-full mb-3 text-xl font-medium' aria-expanded={isConditionOpen} >
+              <span>CONDITION</span>
+              <i className={`ri-arrow-down-s-line transition-transform duration-300 ${isConditionOpen ? 'rotate-180' : ''}`}></i>
+            </button>
+            <div className={`overflow-hidden transition-all duration-300 ${isConditionOpen ? 'max-h-48' : 'max-h-0'}`}>
+              <div className='flex flex-col gap-2 text-sm font-light text-gray-700'>
+                <label className='flex items-center gap-2 cursor-pointer'>
+                  <input className='w-4 h-4' type="checkbox" value="new" onChange={toggleCondition} checked={tempCondition.includes('new')} aria-label="New condition" />
+                  New
+                </label>
+                <label className='flex items-center gap-2 cursor-pointer'>
+                  <input className='w-4 h-4' type="checkbox" value="like-new" onChange={toggleCondition} checked={tempCondition.includes('like-new')} aria-label="Like new condition" />
+                  Like New
+                </label>
+                <label className='flex items-center gap-2 cursor-pointer'>
+                  <input className='w-4 h-4' type="checkbox" value="good" onChange={toggleCondition} checked={tempCondition.includes('good')} aria-label="Good condition" />
+                  Good
+                </label>
+                <label className='flex items-center gap-2 cursor-pointer'>
+                  <input className='w-4 h-4' type="checkbox" value="fair" onChange={toggleCondition} checked={tempCondition.includes('fair')} aria-label="Fair condition" />
+                  Fair
+                </label>
+              </div>
             </div>
+          </div>
+
+          {/* APPLY & CLEAR -> */}
+          <div className='mt-auto flex gap-4 font-[Monsterat]'>
+            <button onClick={handleClearFilters} className='flex-1 py-3 border text-black bg-white hover:bg-gray-100 transition-colors duration-200' aria-label="Clear all filters" >
+              CLEAR
+            </button>
+            <button onClick={handleApplyFilters} className='flex-1 py-3 bg-black text-white hover:bg-neutral-800 transition-colors duration-200' aria-label="Apply filters" >
+              APPLY
+            </button>
           </div>
         </div>
       </div>
 
       <div className='container mx-auto px-8 py-8'>
-        <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8'>
-          {loading ? (
-            <div className='col-span-full text-center py-8'>Loading products...</div>
-          ) : filterProducts.length === 0 ? (
-            <div className='col-span-full text-center py-8'>No products found</div>
-          ) : (
-            filterProducts.map((item, index) => (
-              <ProductDisplay 
-                key={item._id || index}
-                name={item.name} 
-                price={item.price} 
-                image={item.image} 
-                id={item._id} 
-              />
-            ))
-          )}
-        </div>
+        {loading ? (
+          <div className='text-center py-8 text-white'>Loading products...</div>
+        ) : (
+          <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8'>
+            {filterProducts.length === 0 ? (
+              <div className='col-span-full text-center py-8 text-white'>No products found</div>
+            ) : (
+              filterProducts.map((item, index) => (
+                <ProductDisplay key={item._id || index} name={item.name} price={item.price} image={item.image} id={item._id} />
+              ))
+            )}
+          </div>
+        )}
       </div>
     </div>
   )

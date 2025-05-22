@@ -11,7 +11,7 @@ import Footer from './components/Footer'
 import 'remixicon/fonts/remixicon.css'
 import FrontPage from './pages/FrontPage'
 import './styles/fonts.css'
-import Sell from './pages/sellProduct'
+import Sell from './pages/Sell'
 import AllOrders from './pages/AllOrders'
 import ListProduct from './pages/ListProduct'
 import AdminOrders from './pages/AdminOrders'
@@ -50,8 +50,8 @@ const App = () => {
         <Route path='/product/:productId' element={<ProtectedRoute><Product /></ProtectedRoute>} />
         <Route path='/profile' element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         <Route path='/place-order' element={<ProtectedRoute><PlaceOrder /></ProtectedRoute>} />
-        <Route path='/sell' element={<ProtectedRoute><Sell /></ProtectedRoute>} />
         <Route path='/all-orders' element={<ProtectedRoute><AllOrders /></ProtectedRoute>} />
+        <Route path='/sell/*' element={<ProtectedRoute><Sell /></ProtectedRoute>} />
         <Route path='/list-product' element={<ProtectedRoute><ListProduct /></ProtectedRoute>} />
         <Route path='/admin-orders' element={<ProtectedRoute><AdminOrders /></ProtectedRoute>} />
       </Routes>

@@ -8,11 +8,11 @@ const Button = ({
   className = '',
   ...props 
 }) => {
-  const baseStyles = 'font-["Monsterat"] text-sm rounded-lg transition-all';
+  const baseStyles = 'font-["Monsterat"] text-sm transition-all';
   
   const variants = {
     primary: 'bg-[#22df04] text-black hover:bg-[#1fc704]',
-    secondary: 'border border-neutral-300 hover:bg-neutral-50',
+    secondary: 'border border-neutral-300 hover:scale-105',
     danger: 'bg-red-500 text-white hover:bg-red-600'
   };
 
