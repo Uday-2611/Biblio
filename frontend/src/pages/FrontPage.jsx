@@ -47,7 +47,7 @@ const FrontPage = () => {
                 }} />
 
             <div className='relative z-10 flex flex-col items-center'>
-                <h1 className={`text-white font-[Editorial] font-bold text-[10rem] transition-opacity duration-1000 ${animationStage >= 1 ? 'opacity-100' : 'opacity-0'}`}>
+                <h1 className={`text-neutral-200 font-[Editorial] font-bold text-[12rem] transition-opacity duration-1000 ${animationStage >= 1 ? 'opacity-100' : 'opacity-0'}`}>
                     Biblio
                 </h1>
 
@@ -76,8 +76,8 @@ const FrontPage = () => {
 
             <div className={`absolute bottom-12 w-full flex justify-center left-0 transition-all duration-1000 ${animationStage >= 4 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`} >
                 <div className="relative inline-flex items-center justify-center gap-4 group">
-                    <div className="absolute inset-0 duration-1000 opacity-60 transition-all bg-gradient-to-r from-red-900 via-red-500 to-red-700 rounded-xl blur-lg filter group-hover:opacity-100 group-hover:duration-200"></div>
-                    <NavLink to='/login' className="group relative inline-flex items-center justify-center text-base rounded-sm bg-neutral-900 px-8 py-3 font-[Monsterat] text-white transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5 " >
+                    <div className="absolute rounded-xl"></div>
+                    <NavLink to='/login' className="group relative inline-flex items-center justify-center text-base rounded-sm bg-red-700 px-8 py-3 font-[Monsterat] text-white transition-all duration-200 hover:shadow-lg hover:scale-105 " >
                         SHOP NOW
                     </NavLink>
                 </div>
