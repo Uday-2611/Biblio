@@ -77,7 +77,7 @@ const PlaceOrder = () => {
     <div className='w-screen h-screen bg-white overflow-hidden'>
       <div className='flex h-full'>
         <div className='w-[60%] p-16 flex flex-col gap-8 overflow-y-auto ml-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]'>
-          <h1 className='font-[Editorial] text-red-600 text-5xl tracking-tighter'>Page Turner</h1>
+          <h1 className='font-[Editorial] text-red-600 text-5xl tracking-tighter'>Biblio</h1>
 
           <div className='font-[SourceSans] bg-neutral-50 p-6 rounded-lg'>
             <div className='flex items-center gap-3'>

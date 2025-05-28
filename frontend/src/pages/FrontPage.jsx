@@ -48,7 +48,7 @@ const FrontPage = () => {
 
             <div className='relative z-10 flex flex-col items-center'>
                 <h1 className={`text-white font-[Editorial] font-bold text-[10rem] transition-opacity duration-1000 ${animationStage >= 1 ? 'opacity-100' : 'opacity-0'}`}>
-                    Page Turner
+                    Biblio
                 </h1>
 
                 <div className={` font-[Monsterat] flex items-center gap-2 text-xl text-neutral-400 mt-4 transition-all duration-1000 ${animationStage >= 3 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} >

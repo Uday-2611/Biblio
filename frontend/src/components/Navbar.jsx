@@ -12,7 +12,7 @@ const Navbar = () => {
             <div className='flex p-4 w-[100%] m-auto justify-between items-center bg-[#111] text-white'>
                 <div>
                     <NavLink to='/home'>
-                        <h1 className='text-[2vw] font-[EditorialLight] font-medium text-red-600 tracking-tight ml-4'>Page Turner</h1>
+                        <h1 className='text-[2vw] font-[EditorialLight] font-medium text-red-600 tracking-tight ml-4'>Biblio</h1>
                     </NavLink>
                 </div>
 

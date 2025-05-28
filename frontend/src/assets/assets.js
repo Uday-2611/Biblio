@@ -6,7 +6,9 @@ import Background from './images/background.jpg'
 import image1 from './images/Image-1.jpg'
 import image2 from './images/Image-2.jpg'
 import image3 from './images/image-3.jpeg'
-// black 070606
+import oldMan from './images/old-man.jpeg'
+import george from './images/george.jpeg'
+import penguin from './images/penguin-bbok.jpeg'
 
 export const assets = {
     book1,
@@ -15,7 +17,10 @@ export const assets = {
     scroller1,
     image1,
     image2,
-    image3
+    image3,
+    oldMan,
+    george,
+    penguin
 }
 
 

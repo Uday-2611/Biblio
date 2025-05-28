@@ -76,7 +76,7 @@ const Login = () => {
         <div className='w-full max-w-md flex flex-col items-center p-8 '>
           <div className='text-center mb-8 '>
             <h1 className='text-6xl mb-4 text-neutral-100 font-[Editorial] tracking-tighter'>
-              Page Turner
+              Biblio
             </h1>
           </div>
 
