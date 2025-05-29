@@ -4,7 +4,7 @@ import productModel from "../models/productModel.js";
 // Add product ->
 const addProduct = async (req, res) => {
     try {
-        const { name, price, Category, Condition, description, date } = req.body;
+        const { name, author, price, Category, Condition, description, date } = req.body;
         const images = [];
         
         // Upload images to Cloudinary
@@ -33,6 +33,7 @@ const addProduct = async (req, res) => {
 
         const newProduct = new productModel({
             name,
+            author,
             price: Number(price),
             Category,
             Condition,

@@ -268,7 +268,12 @@ const ShopContextProvider = ({ children }) => {
                 toast.error(response.data.message);
             }
         } catch (error) {
-            toast.error(error.response?.data?.message || 'Registration failed');
+            const errorMessage = error.response?.data?.message || 'Registration failed';
+            if (errorMessage.toLowerCase().includes('already exists')) {
+                toast.error('An account with this email already exists');
+            } else {
+                toast.error(errorMessage);
+            }
         }
     }
 

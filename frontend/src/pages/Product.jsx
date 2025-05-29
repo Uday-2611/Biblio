@@ -17,6 +17,7 @@ const Product = () => {
   const [rating, setRating] = useState(5);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedImage, setSelectedImage] = useState(0);
+  const [showShareOptions, setShowShareOptions] = useState(false);
 
   const fetchProductData = async () => {
     products.map((item) => {
@@ -92,6 +93,49 @@ const Product = () => {
     }
   };
 
+  const handleShare = async () => {
+    const shareUrl = window.location.href;
+    const shareTitle = `${productData.name} by ${productData.author}`;
+    const shareText = `Check out ${productData.name} by ${productData.author} on Biblio!`;
+
+    // Try using Web Share API first
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: shareTitle,
+          text: shareText,
+          url: shareUrl,
+        });
+      } catch (error) {
+        console.error('Error sharing:', error);
+        setShowShareOptions(true);
+      }
+    } else {
+      // Fallback to custom share options
+      setShowShareOptions(true);
+    }
+  };
+
+  const shareToWhatsApp = () => {
+    const text = `Check out ${productData.name} by ${productData.author} on Biblio! ${window.location.href}`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+    setShowShareOptions(false);
+  };
+
+  const shareToInstagram = () => {
+    // Instagram doesn't support direct sharing via URL
+    // We'll copy the link to clipboard instead
+    navigator.clipboard.writeText(window.location.href);
+    toast.success('Link copied! You can now paste it in your Instagram story');
+    setShowShareOptions(false);
+  };
+
+  const copyLink = () => {
+    navigator.clipboard.writeText(window.location.href);
+    toast.success('Link copied to clipboard!');
+    setShowShareOptions(false);
+  };
+
   useEffect(() => {
     fetchProductData();
   }, [productId, products]);
@@ -154,7 +198,9 @@ const Product = () => {
           </div>
 
           <div className='w-1/2 flex flex-col justify-center gap-4 text-white'>
-            <h1 className='font-[Monsterat] uppercase text-[3vw] '>{productData.name}</h1>
+            <div className='flex justify-between items-center'>
+              <h1 className='font-[Monsterat] uppercase text-[3vw] '>{productData.name}</h1>
+            </div>
             <h2 className='font-medium text-[1.5vw]'>{productData.author}</h2>
             <h1 className='font-medium text-[2vw]'>{currency} {productData.price} </h1>
             <p className='text-[1vw] tracking-tight'>{productData.description}</p>
@@ -167,12 +213,61 @@ const Product = () => {
                 <h1 className='uppercase text-lg'>{productData.Condition}</h1>
               </div>
 
-              <button onClick={() => addToCart(productData._id, quantity)} className='bg-white text-black p-4 font-[Monsterat] mt-4 w-full hover:bg-neutral-300'>
-                ADD TO CART
-              </button>
+              <div className='flex gap-4 mt-4'>
+                <button onClick={() => addToCart(productData._id, quantity)} className='bg-white text-black p-4 font-[Monsterat] w-full hover:bg-neutral-300'>
+                  ADD TO CART
+                </button>
+                <button 
+                  onClick={handleShare}
+                  className='bg-white text-black p-4 font-[Monsterat] aspect-square hover:bg-neutral-300'
+                  title="Share"
+                >
+                  <i className="ri-share-line text-2xl"></i>
+                </button>
+              </div>
             </div>
           </div>
         </div>
+
+        {/* Share Options Modal */}
+        {showShareOptions && (
+          <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>
+            <div className='bg-neutral-900 p-6 rounded-lg w-80'>
+              <div className='flex justify-between items-center mb-4'>
+                <h2 className='text-white text-xl font-[Monsterat]'>Share Product</h2>
+                <button 
+                  onClick={() => setShowShareOptions(false)}
+                  className='text-white hover:text-neutral-400'
+                >
+                  <i className="ri-close-line text-2xl"></i>
+                </button>
+              </div>
+              <div className='flex flex-col gap-3'>
+                <button 
+                  onClick={shareToWhatsApp}
+                  className='flex items-center gap-3 text-white p-3 hover:bg-neutral-800 rounded-lg transition-colors'
+                >
+                  <i className="ri-whatsapp-line text-2xl text-green-500"></i>
+                  <span>Share on WhatsApp</span>
+                </button>
+                <button 
+                  onClick={shareToInstagram}
+                  className='flex items-center gap-3 text-white p-3 hover:bg-neutral-800 rounded-lg transition-colors'
+                >
+                  <i className="ri-instagram-line text-2xl text-pink-500"></i>
+                  <span>Share on Instagram</span>
+                </button>
+                <button 
+                  onClick={copyLink}
+                  className='flex items-center gap-3 text-white p-3 hover:bg-neutral-800 rounded-lg transition-colors'
+                >
+                  <i className="ri-link text-2xl text-blue-500"></i>
+                  <span>Copy Link</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* REVIEW SECTION */}
         <div className='w-[90%] m-auto mb-20 mt-20'>

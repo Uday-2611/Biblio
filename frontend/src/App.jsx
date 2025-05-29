@@ -16,6 +16,7 @@ import AllOrders from './pages/AllOrders'
 import ListProduct from './pages/ListProduct'
 import AdminOrders from './pages/AdminOrders'
 import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { ShopContext } from './context/ShopContext'
 
 const ProtectedRoute = ({ children }) => {
@@ -37,7 +38,26 @@ const App = () => {
 
   return (
     <div className={`${isHiddenPath ? 'w-full' : 'px-4 sm:px-[5vw] md:px-[7vw] lg:px-[2vw]'} relative h-full`}>
-      <ToastContainer />
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={true}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        style={{
+          width: 'auto',
+          maxWidth: '400px'
+        }}
+        toastStyle={{
+          background: 'white',
+          color: 'black'
+        }}
+      />
       {!isHiddenPath && <div className="fixed top-0 left-0 right-0 z-50"><Navbar /></div>}
       
       <Routes>
