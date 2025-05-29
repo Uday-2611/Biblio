@@ -164,16 +164,21 @@ const Product = () => {
   };
 
   return productData ? (
-    <div className='w-[calc(100%+4vw)] -mx-4 sm:w-[calc(100%+10vw)] sm:-mx-[5vw] md:w-[calc(100%+14vw)] md:-mx-[7vw] lg:w-[calc(100%+4vw)] lg:-mx-[2vw] min-h-screen '>
-      <div className='w-full flex flex-col gap-10 pt-32'>
-        <div className='flex w-[90%] m-auto '>
-          <div className='w-1/2 flex justify-center items-center'>
-            <div className='w-[80%] h-[600px] overflow-hidden flex gap-4'>
-              <div className='flex flex-col h-full w-[25%] gap-4'>
+    <div className='w-[calc(100%+4vw)] -mx-4 sm:w-[calc(100%+10vw)] sm:-mx-[5vw] md:w-[calc(100%+14vw)] md:-mx-[7vw] lg:w-[calc(100%+4vw)] lg:-mx-[2vw] min-h-screen'>
+      <div className='w-full flex flex-col gap-8 md:gap-10 pt-24 md:pt-32'>
+        {/* Product Details Section */}
+        <div className='flex flex-col md:flex-row w-[95%] md:w-[90%] m-auto'>
+          {/* Product Images */}
+          <div className='w-full md:w-1/2'>
+            <div className='w-full md:w-[80%] h-[400px] md:h-[600px] overflow-hidden flex flex-col-reverse md:flex-row gap-4'>
+              {/* Thumbnails */}
+              <div className='flex flex-row md:flex-col h-[100px] md:h-full w-full md:w-[25%] gap-4'>
                 {[0, 1].map((index) => (
                   <div
                     key={index}
-                    className={`h-[calc(50%-8px)] cursor-pointer ${selectedImage === index ? '' : 'opacity-70 hover:opacity-100'}`}
+                    className={`w-1/2 md:w-auto md:h-[calc(50%-8px)] cursor-pointer ${
+                      selectedImage === index ? '' : 'opacity-70 hover:opacity-100'
+                    }`}
                     onClick={() => setSelectedImage(index)}
                   >
                     {productData.image && productData.image[index] && (
@@ -187,7 +192,8 @@ const Product = () => {
                 ))}
               </div>
 
-              <div className='w-[75%] h-full overflow-hidden '>
+              {/* Main Image */}
+              <div className='w-full md:w-[75%] h-[300px] md:h-full overflow-hidden'>
                 <img
                   src={productData.image && productData.image[selectedImage] ? productData.image[selectedImage] : ''}
                   className='w-full h-full object-contain'
@@ -197,29 +203,34 @@ const Product = () => {
             </div>
           </div>
 
-          <div className='w-1/2 flex flex-col justify-center gap-4 text-white'>
-            <div className='flex justify-between items-center'>
-              <h1 className='font-[Monsterat] uppercase text-[3vw] '>{productData.name}</h1>
+          {/* Product Info */}
+          <div className='w-full md:w-1/2 flex flex-col gap-4 text-white p-4 md:p-0 mt-8 md:mt-0'>
+            <div className='flex flex-col gap-2'>
+              <h1 className='font-[Monsterat] uppercase text-2xl sm:text-3xl md:text-[3vw]'>{productData.name}</h1>
+              <h2 className='font-medium text-xl sm:text-2xl md:text-[1.5vw]'>{productData.author}</h2>
+              <h1 className='font-medium text-2xl sm:text-3xl md:text-[2vw]'>{currency} {productData.price}</h1>
             </div>
-            <h2 className='font-medium text-[1.5vw]'>{productData.author}</h2>
-            <h1 className='font-medium text-[2vw]'>{currency} {productData.price} </h1>
-            <p className='text-[1vw] tracking-tight'>{productData.description}</p>
+            
+            <p className='text-base sm:text-lg md:text-[1vw] tracking-tight'>{productData.description}</p>
 
-            <div className='flex flex-col gap-2 w-[70%]'>
-              <div className='py-4 border-b border-neutral-400 w-full'>
-                <h1 className='uppercase text-lg'>{productData.Category}</h1>
+            <div className='flex flex-col gap-2 w-full md:w-[70%] mt-4'>
+              <div className='py-4 border-b border-neutral-400'>
+                <h1 className='uppercase text-base md:text-lg'>{productData.Category}</h1>
               </div>
-              <div className='py-4 border-b border-neutral-400 w-full'>
-                <h1 className='uppercase text-lg'>{productData.Condition}</h1>
+              <div className='py-4 border-b border-neutral-400'>
+                <h1 className='uppercase text-base md:text-lg'>{productData.Condition}</h1>
               </div>
 
-              <div className='flex gap-4 mt-4'>
-                <button onClick={() => addToCart(productData._id, quantity)} className='bg-white text-black p-4 font-[Monsterat] w-full hover:bg-neutral-300'>
+              <div className='flex flex-col sm:flex-row gap-4 mt-4'>
+                <button 
+                  onClick={() => addToCart(productData._id, quantity)} 
+                  className='bg-white text-black p-4 font-[Monsterat] w-full hover:bg-neutral-300'
+                >
                   ADD TO CART
                 </button>
                 <button 
                   onClick={handleShare}
-                  className='bg-white text-black p-4 font-[Monsterat] aspect-square hover:bg-neutral-300'
+                  className='bg-white text-black p-4 font-[Monsterat] w-full sm:w-auto sm:aspect-square hover:bg-neutral-300'
                   title="Share"
                 >
                   <i className="ri-share-line text-2xl"></i>
@@ -229,10 +240,60 @@ const Product = () => {
           </div>
         </div>
 
-        {/* Share Options Modal */}
+        {/* Reviews Section */}
+        <div className='w-[90%] m-auto mb-20'>
+          <h1 className='text-2xl sm:text-3xl md:text-[2.5vw] font-[Monsterat] mb-8 text-white'>REVIEWS</h1>
+
+          <div className='flex flex-col md:flex-row gap-8 md:gap-10'>
+            {/* Review Form */}
+            <div className='w-full md:w-1/2'>
+              <form onSubmit={handleSubmitReview} className='mt-2'>
+                {renderStars()}
+                <textarea 
+                  value={newReview} 
+                  onChange={(e) => setNewReview(e.target.value)} 
+                  className='w-full h-[20vh] rounded-sm bg-neutral-900 p-4 font-[Monsterat] placeholder:text-neutral-400' 
+                  placeholder={user ? 'Write a review......' : 'Please login to write a review'} 
+                  disabled={!user || isSubmitting} 
+                />
+                <button 
+                  type="submit" 
+                  disabled={!user || isSubmitting} 
+                  className='mt-4 w-full sm:w-auto bg-white text-black px-6 py-2 uppercase font-[Monsterat] text-sm disabled:opacity-50'
+                >
+                  {isSubmitting ? 'Submitting...' : 'Submit Review'}
+                </button>
+              </form>
+            </div>
+
+            {/* Review List */}
+            <div className='w-full md:w-1/2 flex flex-col gap-4'>
+              {reviews.length === 0 ? (
+                <p className='text-neutral-500 text-center py-8'>No reviews yet</p>
+              ) : (
+                reviews.map((review) => (
+                  <UserReview 
+                    key={review._id} 
+                    review={review} 
+                    onDelete={handleDeleteReview} 
+                    canDelete={user && user.id === review.userId._id} 
+                  />
+                ))
+              )}
+            </div>
+          </div>
+
+          {/* Related Products */}
+          <div className='mt-20'>
+            <h2 className='text-xl sm:text-2xl md:text-3xl font-[Monsterat] mb-8 text-white'>RELATED PRODUCTS</h2>
+            <RelatedProducts Category={productData.Category} Condition={productData.Condition} />
+          </div>
+        </div>
+
+        {/* Share Modal */}
         {showShareOptions && (
-          <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>
-            <div className='bg-neutral-900 p-6 rounded-lg w-80'>
+          <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4'>
+            <div className='bg-neutral-900 p-6 rounded-lg w-full max-w-sm'>
               <div className='flex justify-between items-center mb-4'>
                 <h2 className='text-white text-xl font-[Monsterat]'>Share Product</h2>
                 <button 
@@ -268,54 +329,6 @@ const Product = () => {
             </div>
           </div>
         )}
-
-        {/* REVIEW SECTION */}
-        <div className='w-[90%] m-auto mb-20 mt-20'>
-          <h1 className='text-[2.5vw] font-[Monsterat] mb-4 text-white'>REVIEWS</h1>
-
-          <div className='flex gap-10'>
-            <div className='w-1/2'>
-              <form onSubmit={handleSubmitReview} className='mt-2'>
-                {renderStars()}
-                <textarea 
-                  value={newReview} 
-                  onChange={(e) => setNewReview(e.target.value)} 
-                  className='w-full h-[20vh] rounded-sm bg-neutral-900 p-4 font-[Monsterat] placeholder:text-neutral-400' 
-                  placeholder={user ? 'Write a review......' : 'Please login to write a review'} 
-                  disabled={!user || isSubmitting} 
-                />
-
-                <button 
-                  type="submit" 
-                  disabled={!user || isSubmitting} 
-                  className='mt-4 bg-white text-black px-6 py-2 uppercase font-[Monsterat] text-sm disabled:opacity-50'
-                >
-                  {isSubmitting ? 'Submitting...' : 'Submit Review'}
-                </button>
-              </form>
-            </div>
-
-            <div className='w-1/2 flex flex-col gap-4 mt-14'>
-              {reviews.length === 0 ? (
-                <p className='text-neutral-500 text-center py-8'>No reviews yet</p>
-              ) : (
-                reviews.map((review) => (
-                  <UserReview 
-                    key={review._id} 
-                    review={review} 
-                    onDelete={handleDeleteReview} 
-                    canDelete={user && user.id === review.userId._id} 
-                  />
-                ))
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* RELATED PRODUCTS */}
-        <div className='m-auto w-[90%]'>
-          <RelatedProducts Category={productData.Category} Condition={productData.Condition} />
-        </div>
       </div>
     </div>
   ) : <div className='opacity-0'></div>

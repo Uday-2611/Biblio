@@ -28,7 +28,7 @@ const SellProduct = () => {
         toast.error('Image size should be less than 5MB');
         return;
       }
-
+      
       const imageUrl = URL.createObjectURL(files[0]);
       setNewBook(prev => ({
         ...prev,
@@ -107,11 +107,12 @@ const SellProduct = () => {
   };
 
   return (
-    <div className='p-8 mt-20'>
+    <div className='p-4 sm:p-8 mt-20'>
       <div className='flex flex-col gap-6'>
-        <h1 className='font-["Monsterat"] text-5xl font-medium'>ADD NEW ITEM</h1>
-        <form onSubmit={handleSubmit} className='flex flex-col gap-6 max-w-2xl'>
-          <div className='grid grid-cols-2 gap-4'>
+        <h1 className='font-["Monsterat"] text-3xl sm:text-4xl md:text-5xl font-medium text-center md:text-left'>ADD NEW ITEM</h1>
+        <form onSubmit={handleSubmit} className='flex flex-col gap-6 max-w-2xl mx-auto md:mx-0'>
+          {/* Image Upload Section */}
+          <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
             {[1, 2].map(num => (
               <div key={num} className='relative w-full aspect-square rounded-sm flex items-center justify-center bg-neutral-100'>
                 <input type="file" name={`image${num}`} accept="image/*" onChange={handleImageUpload} className='absolute inset-0 opacity-0 cursor-pointer'/>
@@ -132,51 +133,71 @@ const SellProduct = () => {
             ))}
           </div>
 
-          <div className='flex flex-col gap-2 text-black font-[Monsterat]'>
-            <label>NAME</label>
-            <input type="text" name="name" value={newBook.name} onChange={handleInputChange} className='bg-neutral-100 p-2 rounded-sm' placeholder='Enter Book Name' />
-          </div>
-
-          <div className='flex flex-col gap-2 text-black font-[Monsterat]'>
-            <label>AUTHOR</label>
-            <input type="text" name="author" value={newBook.author} onChange={handleInputChange} className='bg-neutral-100 p-2 rounded-sm' required placeholder="Enter Author's Name" />
-          </div>
-
-          <div className='flex gap-4 text-black font-[Monsterat]'>
-            <div className='flex flex-col gap-2 w-1/2'>
-              <label>CONDITION</label>
-              <select name="Condition" value={newBook.Condition} onChange={handleInputChange} className='bg-neutral-100 p-2 rounded-sm' required >
-                <option value="New">New</option>
-                <option value="Like-New">Like New</option>
-                <option value="Good">Good</option>
-                <option value="Fair">Fair</option>
-              </select>
+          {/* Book Details Form */}
+          <div className='space-y-6'>
+            <div className='flex flex-col gap-2 text-black font-[Monsterat]'>
+              <label>NAME</label>
+              <input type="text" name="name" value={newBook.name} onChange={handleInputChange} className='bg-neutral-100 p-3 rounded-sm w-full' placeholder='Enter Book Name' required />
             </div>
 
-            <div className='flex flex-col gap-2 w-1/2 text-black font-[Monsterat]'>
-              <label>CATEGORY</label>
-              <select name="Category" value={newBook.Category} onChange={handleInputChange} className='bg-neutral-100 p-2 rounded-sm' required>
-                <option value="">Select Category</option>
-                <option value="Fiction">Fiction</option>
-                <option value="Non-Fiction">Non-Fiction</option>
-                <option value="Academic">Academic</option>
-              </select>
+            <div className='flex flex-col gap-2 text-black font-[Monsterat]'>
+              <label>AUTHOR</label>
+              <input type="text" name="author" value={newBook.author} onChange={handleInputChange} className='bg-neutral-100 p-3 rounded-sm w-full' required placeholder="Enter Author's Name" />
             </div>
-          </div>
 
-          <div className='flex flex-col gap-2 text-black font-[Monsterat]'>
-            <label>DESCRIPTION</label>
-            <textarea name="description" value={newBook.description} onChange={handleInputChange} className='bg-neutral-100 p-2 rounded-sm min-h-[100px]' required />
-          </div>
+            <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+              <div className='flex flex-col gap-2 text-black font-[Monsterat]'>
+                <label>CONDITION</label>
+                <select name="Condition" value={newBook.Condition} onChange={handleInputChange} className='bg-neutral-100 p-3 rounded-sm w-full' required>
+                  <option value="New">New</option>
+                  <option value="Like-New">Like New</option>
+                  <option value="Good">Good</option>
+                  <option value="Fair">Fair</option>
+                </select>
+              </div>
 
-          <div className='flex flex-col gap-2 text-black font-[Monsterat]'>
-            <label >PRICE</label>
-            <input type="number" name="price" value={newBook.price} onChange={handleInputChange} className='bg-neutral-100 p-2 rounded-sm ' required />
-          </div>
+              <div className='flex flex-col gap-2 text-black font-[Monsterat]'>
+                <label>CATEGORY</label>
+                <select name="Category" value={newBook.Category} onChange={handleInputChange} className='bg-neutral-100 p-3 rounded-sm w-full' required>
+                  <option value="">Select Category</option>
+                  <option value="Fiction">Fiction</option>
+                  <option value="Non-Fiction">Non-Fiction</option>
+                  <option value="Academic">Academic</option>
+                </select>
+              </div>
+            </div>
 
-          <Button type="submit" variant="primary" className="mt-4" >
-            ADD ITEM
-          </Button>
+            <div className='flex flex-col gap-2 text-black font-[Monsterat]'>
+              <label>DESCRIPTION</label>
+              <textarea 
+                name="description" 
+                value={newBook.description} 
+                onChange={handleInputChange} 
+                className='bg-neutral-100 p-3 rounded-sm min-h-[120px] w-full resize-none' 
+                required 
+              />
+            </div>
+
+            <div className='flex flex-col gap-2 text-black font-[Monsterat]'>
+              <label>PRICE</label>
+              <input 
+                type="number" 
+                name="price" 
+                value={newBook.price} 
+                onChange={handleInputChange} 
+                className='bg-neutral-100 p-3 rounded-sm w-full' 
+                required 
+              />
+            </div>
+
+            <Button 
+              type="submit" 
+              variant="primary" 
+              className="w-full sm:w-auto"
+            >
+              ADD ITEM
+            </Button>
+          </div>
         </form>
       </div>
     </div>
