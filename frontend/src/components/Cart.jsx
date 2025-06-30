@@ -41,13 +41,10 @@ const Cart = ({ isOpen, onClose }) => {
 
   return (
     <>
-      {/* OVERLAY */}
       <div className={`fixed inset-0 bg-black transition-opacity duration-300 z-40 ${isOpen ? 'opacity-50' : 'opacity-0 pointer-events-none'}`} onClick={onClose} />
 
-      {/* CART */}
       <div className={`fixed right-0 top-0 h-screen w-full sm:w-[400px] md:w-[480px] bg-white shadow-2xl transform transition-transform duration-300 ease-in-out z-50 ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}>
         <div className='flex flex-col h-full'>
-          {/* HEADER */}
           <div className='px-4 sm:px-6 py-4'>
             <div className='flex justify-between items-center'>
               <h1 className='font-[Monsterat] tracking-wider text-3xl sm:text-4xl font-semibold'>BAG</h1>
@@ -57,7 +54,6 @@ const Cart = ({ isOpen, onClose }) => {
             </div>
           </div>
 
-          {/* CART ITEMS */}
           <div className='flex-1 overflow-y-auto'>
             {cartData.length === 0 ? (
               <div className='flex flex-col items-center justify-center h-full text-neutral-500'>
@@ -105,26 +101,18 @@ const Cart = ({ isOpen, onClose }) => {
             )}
           </div>
 
-          {/* Footer */}
           <div className='border-t p-4 sm:p-6 bg-white mt-auto'>
             <CartTotal />
             <div className='flex flex-col sm:flex-row gap-4 mt-4'>
               {cartData.length > 0 && (
-                <button 
-                  onClick={handleClearCart} 
-                  className='w-full sm:w-1/2 bg-red-500 text-white py-3 font-[Monsterat] transition-colors hover:bg-red-600 text-sm sm:text-base'
-                >
+                <button onClick={handleClearCart} className='w-full sm:w-1/2 bg-red-500 text-white py-3 font-[Monsterat] transition-colors hover:bg-red-600 text-sm sm:text-base'>
                   CLEAR CART
                 </button>
               )}
-              <button 
-                onClick={() => {
-                  navigate('/place-order');
-                  onClose();
-                }} 
-                disabled={cartData.length === 0} 
-                className={`${cartData.length > 0 ? 'w-full sm:w-1/2' : 'w-full'} bg-[#22df04] text-white py-3 font-[Monsterat] transition-colors hover:bg-[#21df04d0] disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base`}
-              >
+              <button onClick={() => {
+                navigate('/place-order');
+                onClose();
+              }} disabled={cartData.length === 0} className={`${cartData.length > 0 ? 'w-full sm:w-1/2' : 'w-full'} bg-[#22df04] text-white py-3 font-[Monsterat] transition-colors hover:bg-[#21df04d0] disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base`}>
                 CHECKOUT
               </button>
             </div>

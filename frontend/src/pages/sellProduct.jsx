@@ -1,7 +1,7 @@
 import { useState, useContext } from 'react';
 import { ShopContext } from '../context/ShopContext';
-import axios from 'axios';
 import { toast } from 'react-toastify';
+import axios from 'axios';
 import Button from '../components/common/Button';
 
 const SellProduct = () => {
@@ -111,7 +111,7 @@ const SellProduct = () => {
       <div className='flex flex-col gap-6'>
         <h1 className='font-["Monsterat"] text-3xl sm:text-4xl md:text-5xl font-medium text-center md:text-left'>ADD NEW ITEM</h1>
         <form onSubmit={handleSubmit} className='flex flex-col gap-6 max-w-2xl mx-auto md:mx-0'>
-          {/* Image Upload Section */}
+          
           <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
             {[1, 2].map(num => (
               <div key={num} className='relative w-full aspect-square rounded-sm flex items-center justify-center bg-neutral-100'>
@@ -133,7 +133,6 @@ const SellProduct = () => {
             ))}
           </div>
 
-          {/* Book Details Form */}
           <div className='space-y-6'>
             <div className='flex flex-col gap-2 text-black font-[Monsterat]'>
               <label>NAME</label>
@@ -169,32 +168,15 @@ const SellProduct = () => {
 
             <div className='flex flex-col gap-2 text-black font-[Monsterat]'>
               <label>DESCRIPTION</label>
-              <textarea 
-                name="description" 
-                value={newBook.description} 
-                onChange={handleInputChange} 
-                className='bg-neutral-100 p-3 rounded-sm min-h-[120px] w-full resize-none' 
-                required 
-              />
+              <textarea name="description" value={newBook.description} onChange={handleInputChange} className='bg-neutral-100 p-3 rounded-sm min-h-[120px] w-full resize-none' required />
             </div>
 
             <div className='flex flex-col gap-2 text-black font-[Monsterat]'>
               <label>PRICE</label>
-              <input 
-                type="number" 
-                name="price" 
-                value={newBook.price} 
-                onChange={handleInputChange} 
-                className='bg-neutral-100 p-3 rounded-sm w-full' 
-                required 
-              />
+              <input type="number" name="price" value={newBook.price} onChange={handleInputChange} className='bg-neutral-100 p-3 rounded-sm w-full' required />
             </div>
 
-            <Button 
-              type="submit" 
-              variant="primary" 
-              className="w-full sm:w-auto"
-            >
+            <Button type="submit" variant="primary" className="w-full sm:w-auto" >
               ADD ITEM
             </Button>
           </div>

@@ -25,11 +25,7 @@ const Button = ({
   const disabledStyles = disabled ? 'opacity-50 cursor-not-allowed' : '';
 
   return (
-    <button
-      className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${disabledStyles} ${className}`}
-      disabled={disabled}
-      {...props}
-    >
+    <button className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${disabledStyles} ${className}`} disabled={disabled} {...props} >
       {children}
     </button>
   );

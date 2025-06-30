@@ -5,7 +5,8 @@ const CartTotal = () => {
     const { currency, getCartAmount, delivery_fee } = useContext(ShopContext);
 
     return (
-        <div className='font-[SourceSans]'>            <div className='flex justify-between items-center text-neutral-600 text-base sm:text-lg'>
+        <div className='font-[SourceSans]'>
+            <div className='flex justify-between items-center text-neutral-600 text-base sm:text-lg'>
                 <span>Subtotal</span>
                 <span>{currency}{getCartAmount()}.00</span>
             </div>

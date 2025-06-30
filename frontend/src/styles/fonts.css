@@ -22,3 +22,8 @@
     font-family: 'EditorialBold';
     src: url('../assets/fonts/EditorialBold.otf') format('truetype');
 }
+
+@font-face {
+    font-family: 'Stardom';
+    src: url('../assets/fonts/Stardom-Regular.otf') format('truetype');
+}

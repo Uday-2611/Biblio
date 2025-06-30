@@ -100,11 +100,7 @@ const AdminOrders = () => {
                       {order.items.map((item, index) => (
                         <div key={index} className="flex items-center gap-2 mb-2">
                           {item.image && item.image[0] && (
-                            <img
-                              src={item.image[0]}
-                              alt={item.name}
-                              className="w-12 h-12 object-contain rounded-sm"
-                            />
+                            <img src={item.image[0]} alt={item.name} className="w-12 h-12 object-contain rounded-sm" />
                           )}
                           <div>
                             <p className="font-medium">{item.name}</p>
@@ -132,11 +128,7 @@ const AdminOrders = () => {
                       </div>
                     </td>
                     <td className='p-4'>
-                      <select 
-                        value={order.status} 
-                        onChange={(e) => handleStatusChange(order._id, e.target.value)} 
-                        className={`px-3 py-1 rounded-full text-sm bg-${getStatusColor(order.status)}-100 text-${getStatusColor(order.status)}-800 border-0`}
-                      >
+                      <select value={order.status} onChange={(e) => handleStatusChange(order._id, e.target.value)} className={`px-3 py-1 rounded-full text-sm bg-${getStatusColor(order.status)}-100 text-${getStatusColor(order.status)}-800 border-0`} >
                         {statusOptions.map(status => (
                           <option key={status} value={status}>
                             {status}

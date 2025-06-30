@@ -35,15 +35,15 @@ const Home = () => {
         <div className='text-center md:text-left md:w-1/2'>
           <h1 className='text-white text-4xl sm:text-5xl md:text-[4.5vw] uppercase font-[Monsterat] font-medium'>Where intellect meets obsession</h1>
         </div>
-        
+
         <div className='hidden md:block w-1/2 relative h-full'>
-          <img src={assets.scroller1} className={`w-[23vw] absolute bottom-0 right-0 z-10 transition-all duration-1000 ease-out ${!initialLoad ? 'translate-y-[-100vh]' : 'translate-y-0'}`} />
-          <img src={assets.image1} className={`w-[23vw] absolute top-10 left-10 z-10 transition-all duration-1000 ease-out delay-300 ${!initialLoad ? 'translate-y-[-100vh]' : 'translate-y-0'}`} />
-          <img src={assets.image3} className={`w-[13vw] absolute top-90 left-60 z-20 transition-all duration-1000 ease-out delay-600 ${!initialLoad ? 'translate-y-[-100vh]' : 'translate-y-0'}`} />
+          <img src={assets.scroller1} className={`w-[20vw] absolute bottom-0 right-0 z-10 transition-all duration-1000 ease-out ${!initialLoad ? 'translate-y-[-90vh]' : 'translate-y-40'}`} />
+          <img src={assets.image1} className={`w-[20vw] absolute top-0 left-10 z-10 transition-all duration-1000 ease-out delay-300 ${!initialLoad ? 'translate-y-[-100vh]' : 'translate-y-0'}`} />
+          <img src={assets.image3} className={`w-[15vw] absolute -top-10 left-60 z-20 transition-all duration-1000 ease-out delay-600 ${!initialLoad ? 'translate-y-[-100vh]' : 'translate-y-0'}`} />
         </div>
       </div>
 
-      <div className='py-8 md:py-10 mb-2 rounded-xl w-full'>
+      <div className='py-8 md:py-10 mb-2 rounded-xl w-full mt-20'>
         <div className='container mx-auto px-4 md:px-8 uppercase mb-12 md:mb-20'>
           <div className='flex flex-col sm:flex-row justify-between items-center gap-4 mb-8 md:mb-12'>
             <h1 className='font-[Monsterat] font-medium text-2xl md:text-4xl tracking-tight text-white text-center sm:text-left'>Latest Collection</h1>
@@ -57,7 +57,7 @@ const Home = () => {
         </div>
       </div>
 
-      <div className='w-[calc(100%+4vw)] -mx-4 sm:w-[calc(100%+10vw)] sm:-mx-[5vw] md:w-[calc(100%+14vw)] md:-mx-[7vw] lg:w-[calc(100%+4vw)] lg:-mx-[2vw] flex flex-col justify-center gap-8 bg-[#151515] px-4 mb-20 py-8'>
+      <div className='w-[calc(100%+4vw)] -mx-4 sm:w-[calc(100%+10vw)] sm:-mx-[5vw] md:w-[calc(100%+14vw)] md:-mx-[7vw] lg:w-[calc(100%+4vw)] lg:-mx-[2vw] flex flex-col justify-center gap-8 bg-[#151515] px-4 mb-20 py-8 mt-20'>
         <h1 className='text-white font-[Monsterat] text-2xl sm:text-3xl md:text-[3vw] text-center'>
           Discover a World of Books at <br className='hidden sm:block'></br> Your Fingertips
         </h1>
@@ -115,27 +115,20 @@ const Home = () => {
         <div className='w-full md:w-1/2 flex justify-center items-center overflow-hidden relative min-h-[300px] md:min-h-[400px] mt-8 md:mt-0'>
           <div className='relative w-full h-full flex items-center justify-center'>
             {images.map((image, index) => (
-              <img 
-                key={index} 
-                src={image} 
-                className={`w-[80%] sm:w-[50%] md:w-[25vw] max-h-[400px] object-contain absolute transition-all duration-1000 ${
-                  index === currentImageIndex
-                    ? 'translate-x-0 opacity-100'
-                    : index === (currentImageIndex - 1 + images.length) % images.length
+              <img key={index} src={image} className={`w-[80%] sm:w-[50%] md:w-[25vw] max-h-[400px] object-contain absolute transition-all duration-1000 ${index === currentImageIndex
+                  ? 'translate-x-0 opacity-100'
+                  : index === (currentImageIndex - 1 + images.length) % images.length
                     ? '-translate-x-full opacity-0'
                     : 'translate-x-full opacity-0'
-                }`}
-                style={{ 
-                  left: '50%', 
-                  transform: `translateX(-50%) ${
-                    index === currentImageIndex 
-                      ? 'translateX(0)' 
-                      : index === (currentImageIndex - 1 + images.length) % images.length 
-                      ? 'translateX(-100%)' 
-                      : 'translateX(100%)'
-                  }` 
-                }} 
-              />
+                }`} style={{
+                  left: '50%',
+                  transform: `translateX(-50%) ${index === currentImageIndex
+                      ? 'translateX(0)'
+                      : index === (currentImageIndex - 1 + images.length) % images.length
+                        ? 'translateX(-100%)'
+                        : 'translateX(100%)'
+                    }`
+                }} />
             ))}
           </div>
         </div>

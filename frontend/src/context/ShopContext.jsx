@@ -1,8 +1,8 @@
 import axios from "axios";
+import PropTypes from 'prop-types';
 import { createContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import PropTypes from 'prop-types';
 
 export const ShopContext = createContext({
     products: [],

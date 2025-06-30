@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState, useCallback } from 'react';
-import Order from '../components/Order';
 import { ShopContext } from '../context/ShopContext';
+import Order from '../components/Order';
 import axios from 'axios';
 
 const AllOrders = () => {
@@ -14,8 +14,8 @@ const AllOrders = () => {
       }
 
       const response = await axios.post(backendUrl + '/api/order/userorders', {}, { headers: { token } });
-      if(response.data.success) {
-        setOrderData(response.data.orders.reverse()); 
+      if (response.data.success) {
+        setOrderData(response.data.orders.reverse());
       }
     } catch (error) {
       console.error('Error loading orders:', error);
@@ -37,7 +37,6 @@ const AllOrders = () => {
 
         <hr />
 
-        {/* ORDER LIST -> */}
         <div className='flex flex-col gap-6 mb-20 font-["SourceSans"]'>
           {orderData.length === 0 ? (
             <div className="text-center py-8 text-neutral-500">No orders found</div>

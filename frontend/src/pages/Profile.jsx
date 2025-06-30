@@ -1,9 +1,9 @@
 import { useContext, useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
-import Order from '../components/Order';
 import { ShopContext } from '../context/ShopContext';
-import axios from 'axios';
 import { toast } from 'react-toastify';
+import axios from 'axios';
+import Order from '../components/Order';
 
 const Profile = () => {
   const { navigate, logout, user, backendUrl, token } = useContext(ShopContext);
@@ -73,7 +73,7 @@ const Profile = () => {
     <>
       <div className='w-[calc(100%+4vw)] -mx-4 sm:w-[calc(100%+10vw)] sm:-mx-[5vw] md:w-[calc(100%+14vw)] md:-mx-[7vw] lg:w-[calc(100%+4vw)] lg:-mx-[2vw] min-h-screen bg-white'>
         <div className='w-[90%] md:w-[80%] m-auto flex flex-col gap-8 pt-24 md:pt-32'>
-          {/* HEADER */}
+          
           <div className='flex flex-col sm:flex-row justify-between items-center gap-4'>
             <h1 className='font-["Monsterat"] text-3xl md:text-5xl font-semibold text-center sm:text-left'>ACCOUNT</h1>
             <button onClick={handleLogout} className='font-["Monsterat"] text-sm px-6 py-3 bg-red-500 transition-all text-white w-full sm:w-auto'>
@@ -83,7 +83,6 @@ const Profile = () => {
 
           <hr />
 
-          {/* USER INFO */}
           <div className='flex flex-col gap-4 font-["SourceSans"]'>
             <div className='flex flex-col gap-2'>
               <p className='text-base md:text-lg'><span>Welcome </span> {user?.name || 'Not Available'}</p>
@@ -91,7 +90,6 @@ const Profile = () => {
             </div>
           </div>
 
-          {/* RECENT ORDERS */}
           <div className='flex flex-col gap-4 font-["SourceSans"] mb-14'>
             <div className='flex flex-col sm:flex-row justify-between items-center gap-4'>
               <h2 className='text-2xl md:text-3xl font-[Monsterat] font-medium text-center sm:text-left'>RECENT ORDERS</h2>
@@ -107,7 +105,6 @@ const Profile = () => {
             </div>
           </div>
 
-          {/* SELL SECTION */}
           {user?.isSeller && (
             <div className='flex flex-col gap-4 font-["SourceSans"] mb-20'>
               <div className='flex flex-col sm:flex-row justify-between items-center gap-4'>
@@ -134,7 +131,6 @@ const Profile = () => {
         </div>
       </div>
 
-      {/* Reviews Modal */}
       {showReviews && selectedProduct && (
         <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4'>
           <div className='bg-white p-6 md:p-8 rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto'>
