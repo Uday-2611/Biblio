@@ -95,7 +95,7 @@ const Login = () => {
                 <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} className='w-full p-3 border border-neutral-600 bg-transparent text-white focus:outline-none focus:border-red-500 transition-colors' required />
               </div>
 
-              {(currentState === 'Login' || (currentState === 'Forgot Password' && isCodeSent)) && (
+              {(currentState === 'Login' || currentState === 'Sign Up' || (currentState === 'Forgot Password' && isCodeSent)) && (
                 <div className='space-y-2'>
                   <label htmlFor="password" className='text-white text-sm'>Password</label>
                   <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} className='w-full p-3 border border-neutral-600 bg-transparent text-white focus:outline-none focus:border-red-500 transition-colors' required />
