@@ -22,6 +22,13 @@ import fbook15 from './frontImages/fbook15.jpg'
 import fbook16 from './frontImages/fbook16.jpg'
 import fbook17 from './frontImages/fbook17.jpg'
 import fbook18 from './frontImages/fbook18.jpg'
+import imgHome1 from './home-grid-images/img-home-1.jpg'
+import imgHome2 from './home-grid-images/img-home-2.jpg'
+import imgHome3 from './home-grid-images/img-home-3.jpg'
+import imgHome4 from './home-grid-images/img-home-4.jpg'
+import imgHome5 from './home-grid-images/img-home-5.jpg'
+import imgHome6 from './home-grid-images/img-home-6.jpg'
+import imgHome7 from './home-grid-images/img-home-7.jpg'
 
 export const assets = {
     image1,
@@ -47,6 +54,13 @@ export const assets = {
     fbook16,
     fbook17,
     fbook18,
+    imgHome1,
+    imgHome2,
+    imgHome3,
+    imgHome4,
+    imgHome5,
+    imgHome6,
+    imgHome7,
 }
 
 

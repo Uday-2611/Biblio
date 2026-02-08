@@ -33,10 +33,7 @@ const RelatedProducts = ({ Category, Condition }) => {
     }, [products, Category, Condition])
 
     return (
-        <div className='my-24 '>
-            <div className='text-3xl py-2 uppercase'>
-                <h1 className='text-[2.5vw] text-white font-[Monsterat] mb-4'>Related Products</h1>
-            </div>
+        <div>
             <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8'>
                 {related.map((item, index) => (
                     <ProductDisplay key={item._id || index} name={item.name} price={item.price} image={item.image} id={item._id} />

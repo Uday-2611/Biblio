@@ -22,8 +22,8 @@ const Footer = () => {
                     <div className='w-full h-full md:h-1/2 flex flex-col p-8 md:p-16 gap-6'>
                         <h1 className='font-[SourceSans] text-white text-xl text-center md:text-left'>Sign up for the latest updates.</h1>
                         <form onSubmit={onSubmitHandler} action="" className="flex flex-col w-full max-w-md mx-auto md:mx-0">
-                            <input type="email" required placeholder='ENTER EMAIL' className='placeholder:font-[Monsterat] bg-white w-full py-4 px-8' />
-                            <button type='submit' className="bg-black text-white font-medium text-md mt-2 w-full py-4 px-8 font-[Monsterat] hover:text-neutral-300 relative z-10 cursor-pointer" >
+                            <input type="email" required placeholder='ENTER EMAIL' className='placeholder:font-[Monsterat] bg-white w-full py-4 px-8 rounded-lg' />
+                            <button type='submit' className="bg-black text-white font-medium text-md mt-2 w-full py-4 px-8 font-[Monsterat] hover:text-neutral-300 relative z-10 cursor-pointer rounded-lg" >
                                 SIGN UP
                             </button>
                         </form>

@@ -11,9 +11,9 @@ const Button = ({
   const baseStyles = 'font-["Monsterat"] text-sm transition-all';
 
   const variants = {
-    primary: 'bg-[#22df04] text-black hover:bg-[#1fc704] rounded-sm',
-    secondary: 'border border-neutral-300 hover:scale-105 rounded-sm',
-    danger: 'bg-red-500 text-white hover:bg-red-600 rounded-sm'
+    primary: 'bg-[#22df04] text-black hover:bg-[#1fc704] rounded-lg',
+    secondary: 'border border-neutral-300 hover:scale-105 rounded-lg',
+    danger: 'bg-red-500 text-white hover:bg-red-600 rounded-lg'
   };
 
   const sizes = {
