@@ -1,6 +1,7 @@
 
 import image1 from './images/Image-1.jpg'
 import image3 from './images/image-3.jpeg'
+import userHomeIcon from './images/user-home-icon.png'
 import oldMan from './images/old-man.jpeg'
 import george from './images/george.jpeg'
 import penguin from './images/penguin-bbok.jpeg'
@@ -33,6 +34,7 @@ import imgHome7 from './home-grid-images/img-home-7.jpg'
 export const assets = {
     image1,
     image3,
+    userHomeIcon,
     oldMan,
     george,
     penguin,

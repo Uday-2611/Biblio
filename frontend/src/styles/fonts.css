@@ -27,3 +27,8 @@
     font-family: 'Stardom';
     src: url('../assets/fonts/Stardom-Regular.otf') format('truetype');
 }
+
+@font-face {
+    font-family: 'Gambarino';
+    src: url('../assets/fonts/Gambarino.otf') format('truetype');
+}

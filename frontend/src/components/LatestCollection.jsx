@@ -1,10 +1,30 @@
 import { useContext, useEffect, useState } from 'react'
 import { ShopContext } from '../context/ShopContext';
-import ProductDisplay from './ProductDisplay';
+import { assets } from '../assets/assets';
 
 const LatestCollection = () => {
     const { products, user } = useContext(ShopContext);
     const [LatestCollection, setLatestCollection] = useState([]);
+    const [activeCard, setActiveCard] = useState(null);
+    const placeholderCards = [assets.imgHome1, assets.imgHome2, assets.imgHome3, assets.imgHome4];
+    const cardDetails = [
+        {
+            heading: 'Curated Discovery Engine',
+            subheading: 'Find overlooked titles through smart curation built for readers who want quality, not noise.'
+        },
+        {
+            heading: 'Sell In Minutes',
+            subheading: 'List your old books quickly, reach real buyers, and keep books in circulation instead of storage.'
+        },
+        {
+            heading: 'Trusted Reader Network',
+            subheading: 'Buy and sell with transparent listings, verified activity, and a community that values good books.'
+        },
+        {
+            heading: 'Sustainable Reading Economy',
+            subheading: 'Every resale extends a book\'s life, lowers waste, and makes reading more accessible across cities.'
+        }
+    ];
 
     useEffect(() => {
         if (products.length > 0) {
@@ -18,10 +38,41 @@ const LatestCollection = () => {
 
     return (
         <div className='container mx-auto px-8'>
-            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8'>
-                {LatestCollection.map((item, index) => (
-                    <ProductDisplay key={index} id={item._id} image={item.image} name={item.name} price={item.price} />
-                ))}
+            <div className='flex justify-center gap-6 mb-10'>
+                {placeholderCards.map((image, index) => {
+                    const isActive = activeCard === index;
+
+                    return (
+                    <div
+                        key={index}
+                        onMouseEnter={() => setActiveCard(index)}
+                        onMouseLeave={() => setActiveCard(null)}
+                        className={`relative h-80 overflow-hidden rounded-3xl border border-white/40 bg-white/60 shadow-sm transition-all duration-500 ease-out ${isActive ? 'w-[530px]' : 'w-64'}`}
+                    >
+                        <div className='absolute inset-0 flex'>
+                            <div className='h-full w-64 flex-shrink-0'>
+                                <img
+                                    src={image}
+                                    alt={`Book card ${index + 1}`}
+                                    className='h-full w-full object-cover'
+                                />
+                            </div>
+
+                            <div className={`relative h-full overflow-hidden bg-gradient-to-b from-white/90 to-[#f7f2ff]/95 transition-all duration-500 ease-out ${isActive ? 'w-[266px] opacity-100' : 'w-0 opacity-0'}`}>
+                                <div className={`pointer-events-none absolute -right-8 top-10 h-24 w-24 rounded-full bg-[#d9c8ff]/45 blur-2xl transition-opacity duration-500 ${isActive ? 'opacity-100' : 'opacity-0'}`}></div>
+                                <div className={`pointer-events-none absolute bottom-12 right-6 h-16 w-16 rounded-full bg-[#f9b57e]/35 blur-xl transition-opacity duration-500 ${isActive ? 'opacity-100' : 'opacity-0'}`}></div>
+                                <div className={`absolute inset-0 flex h-full flex-col justify-end p-6 transition-all duration-300 ease-out ${isActive ? 'translate-y-0 opacity-100 delay-500' : 'translate-y-3 opacity-0 delay-0'}`}>
+                                    <h3 className=' text-xl leading-tight text-neutral-900'>
+                                        {cardDetails[index].heading}
+                                    </h3>
+                                    <p className='mt-3 text-sm leading-relaxed text-neutral-700'>
+                                        {cardDetails[index].subheading}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )})}
             </div>
         </div>
     )

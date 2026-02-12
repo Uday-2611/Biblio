@@ -1,148 +1,149 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { assets } from '../assets/assets'
 import { Link } from 'react-router-dom';
 import Button from '../components/common/Button';
 import LatestCollection from '../components/LatestCollection';
 
 const Home = () => {
-  const [initialLoad, setInitialLoad] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [isTransitioning, setIsTransitioning] = useState(false);
 
   const images = [assets.oldMan, assets.george, assets.penguin];
 
   useEffect(() => {
-    setTimeout(() => {
-      setInitialLoad(true);
-    }, 100);
-  }, []);
-
-  useEffect(() => {
     const interval = setInterval(() => {
-      setIsTransitioning(true);
-      setTimeout(() => {
-        setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
-        setIsTransitioning(false);
-      }, 500);
+      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % images.length);
     }, 3000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [images.length]);
 
   return (
-    <div className='w-full mt-10 flex flex-col gap-10'>
-      <div className='relative min-h-[50vh] md:min-h-[90vh] flex flex-col items-center justify-end'>
-        <div className='text-center w-full mb-12 '>
-          <h1 className='text-gray-900 text-4xl sm:text-5xl md:text-[4vw] uppercase font-[Monsterat] font-medium text-left'>Books worth <span className='text-red-600 italic font-[Stardom] normal-case text-5xl sm:text-6xl md:text-[5vw] pr-6 '>reading <br /> prices</span>
-            Worth Loving</h1>
+    <div className='w-full pt-6 md:pt-8 flex flex-col gap-16'>
+      <section className='relative min-h-[70vh] overflow-hidden rounded-[38px] px-4 pb-12 pt-20 sm:px-7 md:min-h-[90vh] md:px-14 md:pb-20 md:pt-28'>
+        <div className='absolute inset-0 bg-[#f9f6f1]'></div>
+        <div className='absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(249,157,85,0.46)_0%,_rgba(211,194,255,0.38)_45%,_rgba(249,246,241,0.88)_72%)]'></div>
+        <div className='absolute -top-24 left-1/2 h-72 w-72 -translate-x-1/2 rounded-full bg-[#ffbb85]/55 blur-3xl'></div>
+        <div className='absolute bottom-0 right-[-6rem] h-56 w-56 rounded-full bg-[#cbc6ff]/50 blur-3xl'></div>
+
+        <div className='relative z-10 mx-auto flex h-full w-full max-w-5xl flex-col items-center justify-center text-center'>
+          <p className='rounded-full border border-white/75 bg-white/70 px-5 py-2 text-xs font-semibold tracking-[0.13em] text-neutral-700 shadow-sm md:text-sm'>
+            INDIA'S BOOK MARKETPLACE
+          </p>
+
+          <h1 className='mt-12 max-w-4xl font-["Gambarino"] text-5xl leading-[0.96] text-neutral-900 sm:text-6xl md:text-[80px]'>
+            Buy and sell books with ease on Biblio
+          </h1>
+
+          <p className='mt-4 max-w-3xl font-["SourceSans"] text-base leading-relaxed text-neutral-700/85 sm:text-lg md:text-xl'>
+            Discover affordable reads, list your old books in minutes, and connect with a growing community of readers across the country.
+          </p>
+
+          <div className='mt-32 flex flex-col items-center justify-center gap-3 sm:flex-row'>
+            <Link to='/collection' className='group relative overflow-hidden rounded-lg bg-gradient-to-b from-neutral-900 to-neutral-800 px-9 py-4 text-sm font-semibold tracking-[0.14em] text-white transition-colors duration-300 ease-out hover:text-neutral-900'>
+              <span className='pointer-events-none absolute inset-0 bg-gradient-to-r from-[#f99d55] via-[#d3c2ff] to-[#f9f6f1] opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-100'></span>
+              <span className='relative z-10'>EXPERIENCE BIBLIO</span>
+            </Link>
+            <Link to='/sell' className='group relative overflow-hidden rounded-lg bg-white/80 px-8 py-4 text-sm font-semibold tracking-[0.12em] text-neutral-700 transition-colors duration-300 ease-out  hover:text-neutral-900'>
+              <span className='pointer-events-none absolute inset-0 bg-gradient-to-r from-[#f9f6f1] via-[#d3c2ff] to-[#f99d55] opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-100'></span>
+              <span className='relative z-10'>LIST YOUR BOOKS</span>
+            </Link>
+          </div>
+
         </div>
+      </section>
 
-        {/* Expandable Boxes Section */}
-        <div className='hidden md:flex w-full gap-2 h-[300px] '>
-          {[
-            { img: assets.imgHome1, title: 'Vast Collection', desc: 'Explore thousands of books across every genre imaginable' },
-            { img: assets.imgHome2, title: 'Affordable Prices', desc: 'Quality second-hand books at unbeatable prices' },
-            { img: assets.imgHome3, title: 'Easy Selling', desc: 'Turn your old books into cash with simple listing' },
-            { img: assets.imgHome4, title: 'Fast Delivery', desc: 'Quick and reliable shipping right to your doorstep' },
-            { img: assets.imgHome5, title: 'Secure Payment', desc: 'Safe and encrypted transactions for peace of mind' },
-            { img: assets.imgHome6, title: 'Community', desc: 'Join thousands of book lovers sharing their passion' },
-            { img: assets.imgHome7, title: 'Eco-Friendly', desc: 'Give books a second life and help the environment' }
-          ].map((box, index) => (
-            <div
-              key={index}
-              className='rounded-lg flex items-center justify-center cursor-pointer overflow-hidden transition-all duration-500 ease-in-out flex-1 hover:flex-[2] group relative min-w-0'
-            >
-              {/* Background Image */}
-              <div
-                className='absolute inset-0 bg-cover bg-center transition-all duration-500 group-hover:blur-sm group-hover:scale-110'
-                style={{ backgroundImage: `url(${box.img})` }}
-              ></div>
+      <section className='w-[calc(100%+4vw)] -mx-4 sm:w-[calc(100%+10vw)] sm:-mx-[5vw] md:w-[calc(100%+14vw)] md:-mx-[7vw] lg:w-[calc(100%+4vw)] lg:-mx-[2vw] flex flex-col justify-center gap-8 px-4 mb-20 py-8 mt-28'>
+        <h1 className='text-gray-900 font-[Gambarino] text-2xl sm:text-3xl md:text-[3vw] text-center'>
+          Find the Right Book for You, and Pass Yours On
+        </h1>
 
-              {/* Light Overlay */}
-              <div className='absolute inset-0  group-hover:bg-white/50 transition-all duration-500'></div>
-
-              {/* Text Content - Hidden by default, visible on hover */}
-              <div className='relative z-10 text-gray-900 text-center px-4 opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-y-4 group-hover:translate-y-0'>
-                <h3 className='font-[Monsterat] text-xl md:text-2xl font-bold mb-2'>{box.title}</h3>
-                <p className='text-sm md:text-base font-light leading-relaxed'>{box.desc}</p>
-              </div>
+        <div className='flex flex-col md:flex-row justify-center font-[SourceSans] gap-2 mt-16'>
+          <div className='min-h-[400px] w-full md:w-[70vw] md:h-[70vh] rounded-[50px] flex justify-center gap-4 p-4 bg-neutral-100 items-center'>
+            <div className='w-[50%] h-[100%] rounded-3xl bg-gradient-to-br from-[#f99d55] via-[#d3c2ff] to-[#f9f6f1]'>
+              <img
+                src={assets.userHomeIcon}
+                alt='Open book illustration'
+                className='h-full w-full object-contain p-6'
+              />
             </div>
-          ))}
+            <div className='w-[50%] h-[100%] flex flex-col justify-center p-12'>
+              <h1 className='text-3xl md:text-5xl leading-tight text-neutral-900'>
+                Built Around Readers Like You
+              </h1>
+              <p className='mt-5 font-["SourceSans"] text-base md:text-lg leading-relaxed text-neutral-600'>
+                Browse affordable second-hand books, save your favorites, and sell the books you have finished in just a few steps. Biblio is designed to make reading more accessible while helping users earn, discover, and share more value from every book.
+              </p>
+            </div>
+          </div>
         </div>
-
-        {/* Mobile fallback - show images */}
-        <div className='md:hidden w-full relative h-[400px]'>
-          <img src={assets.scroller1} className={`w-[50vw] absolute bottom-0 right-0 z-10 transition-all duration-1000 ease-out ${!initialLoad ? 'translate-y-[-90vh]' : 'translate-y-20'}`} />
-          <img src={assets.image1} className={`w-[50vw] absolute top-0 left-5 z-10 transition-all duration-1000 ease-out delay-300 ${!initialLoad ? 'translate-y-[-100vh]' : 'translate-y-0'}`} />
-          <img src={assets.image3} className={`w-[40vw] absolute top-10 right-10 z-20 transition-all duration-1000 ease-out delay-600 ${!initialLoad ? 'translate-y-[-100vh]' : 'translate-y-0'}`} />
-        </div>
-      </div>
+      </section>
 
       {/* Latest Collection */}
-      <div className='py-8 md:py-10 mb-2 rounded-xl w-full mt-20 '>
-        <div className='container mx-auto px-4 md:px-8 uppercase mb-12 md:mb-20'>
+      <section className='py-8 md:py-10 mb-2 rounded-xl w-full mt-8 '>
+        <div className='container mx-auto px-4 md:px-8 mb-12 md:mb-20'>
           <div className='flex flex-col sm:flex-row justify-between items-center gap-4 mb-8 md:mb-12'>
-            <h1 className='font-[Monsterat] font-medium text-2xl md:text-4xl tracking-tight text-gray-900 text-center sm:text-left'>Latest <span className='text-red-600 italic font-[Stardom] normal-case text-2xl sm:text-4xl md:text-6xl pr-6'>Collection</span> </h1>
-            <Link to="/collection">
-              <Button variant="secondary" className="bg-gray-900 text-white px-6 md:px-8 font-medium text-sm md:text-md w-full sm:w-auto">
-                SHOP ALL
-              </Button>
-            </Link>
+            <h1 className='font-[Gambarino] text-2xl md:text-5xl tracking-tight text-gray-900 text-center sm:text-center mx-auto'>Discover a World of Books at your Fingertips</h1>
           </div>
           <LatestCollection />
         </div>
-      </div>
+      </section>
 
-      <div className='w-[calc(100%+4vw)] -mx-4 sm:w-[calc(100%+10vw)] sm:-mx-[5vw] md:w-[calc(100%+14vw)] md:-mx-[7vw] lg:w-[calc(100%+4vw)] lg:-mx-[2vw] flex flex-col justify-center gap-8 px-4 mb-20 py-8 '>
-        <h1 className='text-gray-900 font-[Monsterat] text-2xl sm:text-3xl md:text-[3vw]'>
-          Discover a World of <span className='text-red-600 italic font-[Stardom] normal-case text-2xl sm:text-4xl md:text-6xl pr-6'>Books</span> at your Fingertips
-        </h1>
+      <section className='relative mb-20 overflow-hidden rounded-[38px] px-5 py-10 md:px-10 md:py-14'>
+        <div className='absolute inset-0 bg-[#f9f6f1]'></div>
+        <div className='absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,_rgba(249,157,85,0.28)_0%,_rgba(211,194,255,0.24)_48%,_rgba(249,246,241,0.92)_78%)]'></div>
+        <div className='absolute -bottom-10 right-10 h-40 w-40 rounded-full bg-[#d3c2ff]/35 blur-3xl'></div>
 
-        <div className='flex flex-col md:flex-row justify-center font-[SourceSans] gap-2'>
-          <div className='min-h-[400px] w-full md:w-[50vw] rounded-lg flex flex-col justify-center gap-4 p-8 bg-red-600'>
-            <h1 className='text-left text-3xl md:text-4xl leading-tight font-bold text-white uppercase'>BROWSE THOUSANDS OF BOOKS</h1>
-            <p className='text-left font-normal text-white text-base md:text-lg'>Biblio offers a vast selection of second-hand books for every reader across every genre imaginable.</p>
+        <div className='relative z-10 grid grid-cols-1 items-center gap-8 md:grid-cols-2 md:gap-10'>
+          <div className='flex flex-col gap-6 text-neutral-900'>
+            <p className='w-fit rounded-full border border-white/70 bg-white/70 px-4 py-2 text-xs font-semibold tracking-[0.14em] text-neutral-700'>
+              WHY READERS CHOOSE BIBLIO
+            </p>
+            <h1 className='font-[Gambarino] text-4xl leading-[1.02] sm:text-5xl md:text-[3.4vw]'>
+              Smarter Book Buying, Better Value, More Reuse
+            </h1>
+            <p className='max-w-xl font-["SourceSans"] text-base leading-relaxed text-neutral-700 md:text-lg'>
+              Build your reading list affordably, discover titles faster, and keep books moving between readers instead of shelves.
+            </p>
           </div>
 
-          <div className='min-h-[400px] w-full md:w-[25vw] rounded-lg flex flex-col justify-center gap-4 p-8 bg-black'>
-            <h1 className='text-left text-3xl md:text-4xl leading-tight font-bold text-white uppercase'>BUY & SELL WITH EASE</h1>
-            <p className='text-left font-normal text-white text-base md:text-lg'>Our platform makes it simple to list and purchase books effortlessly with just a few clicks.</p>
-          </div>
-
-          <div className='min-h-[400px] w-full md:w-[25vw] rounded-lg flex flex-col justify-center gap-4 p-8 bg-black'>
-            <h1 className='text-left text-3xl md:text-4xl leading-tight font-bold text-white uppercase'>JOIN OUR COMMUNITY</h1>
-            <p className='text-left font-normal text-white text-base md:text-lg'>Connect with fellow readers and book enthusiasts who share your passion for literature.</p>
-          </div>
-        </div>
-      </div>
-
-      <div className='w-[calc(100%+4vw)] -mx-4 sm:w-[calc(100%+10vw)] sm:-mx-[5vw] md:w-[calc(100%+14vw)] md:-mx-[7vw] lg:w-[calc(100%+4vw)] lg:-mx-[2vw] p-4 mb-20 flex flex-col md:flex-row'>
-        <div className='w-full md:w-1/2 flex flex-col text-gray-900 gap-8 p-6 justify-center items-center'>
-          <h1 className='font-[Monsterat] text-3xl sm:text-3xl md:text-[3.5vw] text-center md:text-left leading-relaxed'>
-            Discover the Benefits of Shopping Second-Hand with <span className='text-red-600 italic font-[Stardom] normal-case text-2xl sm:text-4xl md:text-6xl pr-6'>Biblio</span>
-          </h1>
-        </div>
-        <div className='w-full md:w-1/2 flex justify-center items-center overflow-hidden relative min-h-[300px] md:min-h-[400px] mt-8 md:mt-0'>
-          <div className='relative w-full h-full flex items-center justify-center'>
-            {images.map((image, index) => (
-              <img key={index} src={image} className={`w-[80%] sm:w-[50%] md:w-[25vw] max-h-[400px] object-contain absolute transition-all duration-1000 ${index === currentImageIndex
-                ? 'translate-x-0 opacity-100'
-                : index === (currentImageIndex - 1 + images.length) % images.length
-                  ? '-translate-x-full opacity-0'
-                  : 'translate-x-full opacity-0'
-                }`} style={{
-                  left: '50%',
-                  transform: `translateX(-50%) ${index === currentImageIndex
-                    ? 'translateX(0)'
-                    : index === (currentImageIndex - 1 + images.length) % images.length
-                      ? 'translateX(-100%)'
-                      : 'translateX(100%)'
-                    }`
-                }} />
-            ))}
+          <div className='relative h-[320px] overflow-hidden rounded-[28px] border border-white/60 bg-white/60 shadow-[0_14px_34px_rgba(26,26,38,0.12)] backdrop-blur-md md:h-[420px]'>
+            <div className='absolute -top-10 right-6 h-28 w-28 rounded-full bg-[#f99d55]/30 blur-3xl'></div>
+            <div className='relative h-full w-full'>
+              {images.map((image, index) => (
+                <div
+                  key={index}
+                  className={`absolute inset-0 flex items-center justify-center transition-all duration-700 ease-out ${
+                    index === currentImageIndex ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+                  }`}
+                >
+                  <img
+                    src={image}
+                    alt={`Featured book ${index + 1}`}
+                    className='w-[72%] max-h-[300px] object-contain md:w-[66%] md:max-h-[360px]'
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      </section>
+
+      <section className='w-[calc(100%+4vw)] -mx-4 sm:w-[calc(100%+10vw)] sm:-mx-[5vw] md:w-[calc(100%+14vw)] md:-mx-[7vw] lg:w-[calc(100%+4vw)] lg:-mx-[2vw] flex flex-col justify-center gap-8 px-4 mb-20 py-8 mt-28'>
+        
+        <div className='flex flex-col md:flex-row justify-center font-[SourceSans] gap-2 mt-16 '>
+          <div className='min-h-[400px] w-full md:w-[70vw] md:h-[70vh] rounded-[50px] flex justify-center gap-4 p-4 bg-neutral-100 items-center'>
+            <div className='h-full w-full rounded-3xl bg-gradient-to-br from-[#d9ecff] via-[#ffffff] to-[#dfe4ea] p-8 md:p-14 flex flex-col items-center justify-center text-center'>
+              <h2 className='max-w-4xl font-[Gambarino] text-4xl leading-[1.02] text-black sm:text-5xl md:text-[3vw]'>
+                Buy smarter. Sell easier. Keep books moving.
+              </h2>
+              <Link to='/collection' className='group relative mt-10 overflow-hidden rounded-lg bg-gradient-to-b from-neutral-900 to-neutral-800 px-9 py-4 text-sm font-semibold tracking-[0.14em] text-white transition-colors duration-300 ease-out hover:text-neutral-900'>
+                <span className='pointer-events-none absolute inset-0 bg-gradient-to-r from-[#f99d55] via-[#d3c2ff] to-[#f9f6f1] opacity-0 transition-opacity duration-500 ease-out group-hover:opacity-100'></span>
+                <span className='relative z-10'>EXPERIENCE BIBLIO</span>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
 
     </div>
   )
