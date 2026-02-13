@@ -15,15 +15,15 @@ const ProductDisplay = ({ id, image, name, price }) => {
     };
 
     return (
-        <Link to={`/product/${id}`} className='block bg-neutral-100 rounded-lg p-4'>
-            <div className='aspect-square overflow-hidden rounded-md mb-3'>
+        <Link to={`/product/${id}`} className='group block rounded-2xl border border-white/85 bg-white/75 p-4 shadow-[0_10px_24px_rgba(24,24,34,0.08)] backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:bg-white'>
+            <div className='aspect-square overflow-hidden rounded-xl mb-3 bg-gradient-to-b from-[#fff8ef] to-[#f6f1ff]'>
                 <img className='w-full h-full object-contain' src={image && image[0] ? image[0] : ''} alt={name} />
             </div>
             <div className='flex flex-col gap-2'>
-                <h1 className='text-lg font-[SourceSans] font-medium truncate'>{name}</h1>
+                <h1 className='text-lg font-[Gambarino] text-neutral-900 truncate'>{name}</h1>
                 <div className='flex justify-between items-center'>
-                    <h1 className='text-xl font-[SourceSans] font-semibold'>{price}{currency}</h1>
-                    <button onClick={handleAddToCart} className='flex-shrink-0 text-xl hover:text-red-500 transition-colors'>
+                    <h1 className='text-xl font-[SourceSans] font-semibold text-neutral-900'>{price}{currency}</h1>
+                    <button onClick={handleAddToCart} className='flex-shrink-0 text-xl text-neutral-700 group-hover:text-red-600 transition-colors'>
                         <i className="ri-heart-fill"></i>
                     </button>
                 </div>

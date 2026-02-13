@@ -13,26 +13,26 @@ const CartTotal = () => {
     const barcodePattern = generateBarcode();
 
     return (
-        <div className='font-[SourceSans] bg-neutral-100 p-6 pb-8 relative rounded-lg' style={{ position: 'relative' }}>
+        <div className='font-[SourceSans] border border-white/85 bg-white/85 p-6 pb-8 relative rounded-2xl shadow-sm' style={{ position: 'relative' }}>
             {/* Line Items */}
             <div className='space-y-3 mb-4'>
-                <div className='flex justify-between items-center text-gray-700'>
+                <div className='flex justify-between items-center text-neutral-700'>
                     <span className='text-sm'>Subtotal</span>
                     <span className='text-sm font-medium'>{currency}{getCartAmount()}.00</span>
                 </div>
-                <div className='flex justify-between items-center text-gray-700'>
+                <div className='flex justify-between items-center text-neutral-700'>
                     <span className='text-sm'>Delivery Fee</span>
                     <span className='text-sm font-medium'>{currency}{delivery_fee}.00</span>
                 </div>
             </div>
 
             {/* Dashed Divider */}
-            <div className='border-t-2 border-dashed border-gray-300 my-4'></div>
+            <div className='border-t-2 border-dashed border-neutral-300 my-4'></div>
 
             {/* Grand Total */}
             <div className='flex justify-between items-center mb-6'>
-                <span className='text-xl font-bold text-gray-900'>TOTAL</span>
-                <span className='text-2xl font-bold text-gray-900'>{currency}{getCartAmount() + delivery_fee}.00</span>
+                <span className='text-xl font-bold text-neutral-900'>TOTAL</span>
+                <span className='text-2xl font-bold text-neutral-900'>{currency}{getCartAmount() + delivery_fee}.00</span>
             </div>
 
             {/* Barcode */}

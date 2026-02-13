@@ -71,17 +71,17 @@ const AdminOrders = () => {
   };
 
   return (
-    <div className='w-full min-h-screen'>
-      <div className='w-[90%] m-auto pt-32'>
-        <h1 className='font-["Monsterat"] text-5xl font-medium mb-8'>ORDERS</h1>
+    <div className='w-full min-h-screen p-4 sm:p-6 md:p-8 pt-24 md:pt-28'>
+      <div className='w-full m-auto'>
+        <h1 className='font-[Gambarino] text-4xl md:text-5xl text-neutral-900 mb-8'>ORDERS</h1>
         {loading ? (
           <div className="text-center py-8">Loading orders...</div>
         ) : orders.length === 0 ? (
           <div className="text-center py-8">No orders found</div>
         ) : (
-          <div className='overflow-x-auto'>
+          <div className='overflow-x-auto rounded-2xl border border-white/90 bg-white/85 p-2 sm:p-4 shadow-sm'>
             <table className='w-full'>
-              <thead className='bg-neutral-50'>
+              <thead className='bg-neutral-50/95'>
                 <tr>
                   <th className='p-4 text-left'>Order ID</th>
                   <th className='p-4 text-left'>Products</th>

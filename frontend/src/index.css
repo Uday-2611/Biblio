@@ -6,6 +6,47 @@ body {
     background-color: #f9fafb;
 }
 
+@layer components {
+    .app-page {
+        position: relative;
+        min-height: 100vh;
+        overflow: hidden;
+        padding: 1.5rem 1rem 3rem;
+    }
+
+    .app-page::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: #f9f6f1;
+        z-index: 0;
+    }
+
+    .app-page::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at top, rgba(249, 157, 85, 0.34) 0%, rgba(211, 194, 255, 0.24) 44%, rgba(249, 246, 241, 0.9) 72%);
+        z-index: 0;
+    }
+
+    .app-page-content {
+        position: relative;
+        z-index: 10;
+        width: 100%;
+        max-width: 1280px;
+        margin: 0 auto;
+    }
+
+    .app-surface {
+        border: 1px solid rgba(255, 255, 255, 0.75);
+        background: rgba(255, 255, 255, 0.58);
+        backdrop-filter: blur(14px);
+        border-radius: 34px;
+        box-shadow: 0 16px 36px rgba(25, 25, 35, 0.12);
+    }
+}
+
 ::-webkit-scrollbar {
     display: none;
 }

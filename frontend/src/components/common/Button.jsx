@@ -8,12 +8,12 @@ const Button = ({
   className = '',
   ...props
 }) => {
-  const baseStyles = 'font-["Monsterat"] text-sm transition-all';
+  const baseStyles = 'font-[SourceSans] text-sm tracking-[0.12em] transition-all rounded-xl';
 
   const variants = {
-    primary: 'bg-[#22df04] text-black hover:bg-[#1fc704] rounded-lg',
-    secondary: 'border border-neutral-300 hover:scale-105 rounded-lg',
-    danger: 'bg-red-500 text-white hover:bg-red-600 rounded-lg'
+    primary: 'bg-neutral-900 text-white hover:bg-neutral-800',
+    secondary: 'border border-white/80 bg-white/85 text-neutral-800 hover:bg-white',
+    danger: 'bg-red-600 text-white hover:bg-red-700'
   };
 
   const sizes = {

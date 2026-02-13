@@ -61,7 +61,7 @@ export const DraggableContainer = ({ className, children, variant }) => {
       <div className="h-dvh overflow-hidden">
         <motion.div className="h-dvh overflow-hidden">
           <motion.div className={
-            "grid h-fit w-fit cursor-grab grid-cols-[repeat(12,1fr)] bg-[#141414] active:cursor-grabbing will-change-transform " +
+            "grid h-fit w-fit cursor-grab grid-cols-[repeat(12,1fr)] bg-[#f9f6f1] active:cursor-grabbing will-change-transform " +
             (className || "")
           } drag dragMomentum={true} dragTransition={{
             timeConstant: 200,
@@ -155,7 +155,7 @@ const InfiniteDragScroll = () => {
     <DraggableContainer variant="masonry">
       <GridBody>
         {repeatedImages.map((image) => (
-          <GridItem key={image.id} className="relative h-54 w-36 md:h-96 md:w-64">
+          <GridItem key={image.id} className="relative h-54 w-36 md:h-96 md:w-64 border border-white/70 shadow-sm">
             <img
               src={image.src}
               alt={image.alt}

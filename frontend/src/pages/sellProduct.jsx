@@ -109,12 +109,12 @@ const SellProduct = () => {
   return (
     <div className='p-4 sm:p-8 mt-20'>
       <div className='flex flex-col gap-6'>
-        <h1 className='font-["Monsterat"] text-3xl sm:text-4xl md:text-5xl font-medium text-center md:text-left'>ADD NEW ITEM</h1>
+        <h1 className='font-[Gambarino] text-3xl sm:text-4xl md:text-5xl text-center md:text-left text-neutral-900'>ADD NEW ITEM</h1>
         <form onSubmit={handleSubmit} className='flex flex-col gap-6 max-w-2xl mx-auto md:mx-0'>
           
           <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
             {[1, 2].map(num => (
-              <div key={num} className='relative w-full aspect-square rounded-sm flex items-center justify-center bg-neutral-100'>
+              <div key={num} className='relative w-full aspect-square rounded-xl border border-white/90 flex items-center justify-center bg-white/80'>
                 <input type="file" name={`image${num}`} accept="image/*" onChange={handleImageUpload} className='absolute inset-0 opacity-0 cursor-pointer'/>
                 {newBook.images[`image${num}Preview`] ? (
                   <div className="relative w-full h-full">
@@ -134,20 +134,20 @@ const SellProduct = () => {
           </div>
 
           <div className='space-y-6'>
-            <div className='flex flex-col gap-2 text-black font-[Monsterat]'>
+            <div className='flex flex-col gap-2 text-black font-[SourceSans]'>
               <label>NAME</label>
-              <input type="text" name="name" value={newBook.name} onChange={handleInputChange} className='bg-neutral-100 p-3 rounded-sm w-full' placeholder='Enter Book Name' required />
+              <input type="text" name="name" value={newBook.name} onChange={handleInputChange} className='bg-white/90 border border-white p-3 rounded-xl w-full' placeholder='Enter Book Name' required />
             </div>
 
-            <div className='flex flex-col gap-2 text-black font-[Monsterat]'>
+            <div className='flex flex-col gap-2 text-black font-[SourceSans]'>
               <label>AUTHOR</label>
-              <input type="text" name="author" value={newBook.author} onChange={handleInputChange} className='bg-neutral-100 p-3 rounded-sm w-full' required placeholder="Enter Author's Name" />
+              <input type="text" name="author" value={newBook.author} onChange={handleInputChange} className='bg-white/90 border border-white p-3 rounded-xl w-full' required placeholder="Enter Author's Name" />
             </div>
 
             <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
-              <div className='flex flex-col gap-2 text-black font-[Monsterat]'>
+              <div className='flex flex-col gap-2 text-black font-[SourceSans]'>
                 <label>CONDITION</label>
-                <select name="Condition" value={newBook.Condition} onChange={handleInputChange} className='bg-neutral-100 p-3 rounded-sm w-full' required>
+                <select name="Condition" value={newBook.Condition} onChange={handleInputChange} className='bg-white/90 border border-white p-3 rounded-xl w-full' required>
                   <option value="New">New</option>
                   <option value="Like-New">Like New</option>
                   <option value="Good">Good</option>
@@ -155,9 +155,9 @@ const SellProduct = () => {
                 </select>
               </div>
 
-              <div className='flex flex-col gap-2 text-black font-[Monsterat]'>
+              <div className='flex flex-col gap-2 text-black font-[SourceSans]'>
                 <label>CATEGORY</label>
-                <select name="Category" value={newBook.Category} onChange={handleInputChange} className='bg-neutral-100 p-3 rounded-sm w-full' required>
+                <select name="Category" value={newBook.Category} onChange={handleInputChange} className='bg-white/90 border border-white p-3 rounded-xl w-full' required>
                   <option value="">Select Category</option>
                   <option value="Fiction">Fiction</option>
                   <option value="Non-Fiction">Non-Fiction</option>
@@ -166,14 +166,14 @@ const SellProduct = () => {
               </div>
             </div>
 
-            <div className='flex flex-col gap-2 text-black font-[Monsterat]'>
+            <div className='flex flex-col gap-2 text-black font-[SourceSans]'>
               <label>DESCRIPTION</label>
-              <textarea name="description" value={newBook.description} onChange={handleInputChange} className='bg-neutral-100 p-3 rounded-sm min-h-[120px] w-full resize-none' required />
+              <textarea name="description" value={newBook.description} onChange={handleInputChange} className='bg-white/90 border border-white p-3 rounded-xl min-h-[120px] w-full resize-none' required />
             </div>
 
-            <div className='flex flex-col gap-2 text-black font-[Monsterat]'>
+            <div className='flex flex-col gap-2 text-black font-[SourceSans]'>
               <label>PRICE</label>
-              <input type="number" name="price" value={newBook.price} onChange={handleInputChange} className='bg-neutral-100 p-3 rounded-sm w-full' required />
+              <input type="number" name="price" value={newBook.price} onChange={handleInputChange} className='bg-white/90 border border-white p-3 rounded-xl w-full' required />
             </div>
 
             <Button type="submit" variant="primary" className="w-full sm:w-auto" >

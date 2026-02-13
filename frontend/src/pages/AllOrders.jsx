@@ -29,10 +29,10 @@ const AllOrders = () => {
   }, [loadOrderData]);
 
   return (
-    <div className='w-[calc(100%+4vw)] -mx-4 sm:w-[calc(100%+10vw)] sm:-mx-[5vw] md:w-[calc(100%+14vw)] md:-mx-[7vw] lg:w-[calc(100%+4vw)] lg:-mx-[2vw] min-h-screen bg-white'>
-      <div className='w-[80%] m-auto flex flex-col gap-8 pt-32'>
+    <div className='app-page'>
+      <div className='app-page-content app-surface w-full m-auto flex flex-col gap-8 p-4 sm:p-6 md:p-8 pt-24 md:pt-28'>
         <div className='flex justify-between items-center'>
-          <h1 className='font-["Monsterat"] text-5xl font-semibold'>MY PURCHASES</h1>
+          <h1 className='font-[Gambarino] text-4xl md:text-5xl text-neutral-900'>MY PURCHASES</h1>
         </div>
 
         <hr />

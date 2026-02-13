@@ -155,9 +155,9 @@ const Product = () => {
   };
 
   return productData ? (
-    <div className='w-[calc(100%+4vw)] -mx-4 sm:w-[calc(100%+10vw)] sm:-mx-[5vw] md:w-[calc(100%+14vw)] md:-mx-[7vw] lg:w-[calc(100%+4vw)] lg:-mx-[2vw] min-h-screen'>
-      <div className='w-full flex flex-col gap-8 md:gap-10 pt-24 md:pt-32'>
-        <div className='flex flex-col md:flex-row w-[95%] md:w-[90%] m-auto'>
+    <div className='app-page'>
+      <div className='app-page-content app-surface flex flex-col gap-8 md:gap-10 p-4 sm:p-6 md:p-8 pt-24 md:pt-28'>
+        <div className='flex flex-col md:flex-row w-full md:w-[95%] m-auto'>
 
           <div className='w-full md:w-1/2'>
             <div className='w-full md:w-[80%] h-[400px] md:h-[600px] overflow-hidden flex flex-col-reverse md:flex-row gap-4'>
@@ -180,11 +180,11 @@ const Product = () => {
           </div>
 
           {/* Product Information */}
-          <div className='w-full md:w-1/2 flex flex-col gap-4 text-gray-900 p-4 md:p-0 mt-8 md:mt-12'>
+          <div className='w-full md:w-1/2 flex flex-col gap-4 text-gray-900 p-4 md:p-0 mt-8 md:mt-12 font-[SourceSans]'>
             <div className='flex flex-col gap-2'>
-              <h1 className='uppercase text-2xl sm:text-3xl md:text-[2.5vw]'>{productData.name}</h1>
+              <h1 className='uppercase text-2xl sm:text-3xl md:text-[2.5vw] font-[Gambarino]'>{productData.name}</h1>
               <h2 className='text-xl sm:text-2xl md:text-[1.5vw]'>{productData.author}</h2>
-              <h1 className='font-medium text-2xl sm:text-3xl md:text-[2vw]'>{currency} {productData.price}</h1>
+              <h1 className='font-semibold text-2xl sm:text-3xl md:text-[2vw]'>{currency} {productData.price}</h1>
             </div>
 
             <p className='text-base sm:text-lg md:text-[1vw] tracking-tight'>{productData.description}</p>
@@ -200,7 +200,7 @@ const Product = () => {
               </div>
 
               <div className='flex flex-col sm:flex-row gap-4 mt-4'>
-                <button onClick={() => addToCart(productData._id, quantity)} className='bg-neutral-900 text-white p-4 font-[Monsterat] w-full hover:bg-neutral-800 rounded-lg' >
+                <button onClick={() => addToCart(productData._id, quantity)} className='bg-neutral-900 text-white p-4 font-[SourceSans] tracking-[0.12em] text-sm w-full hover:bg-neutral-800 rounded-lg' >
                   ADD TO CART
                 </button>
                 <button onClick={handleShare} className='bg-neutral-900 text-white p-4 font-[Monsterat] w-full sm:w-auto sm:aspect-square hover:bg-neutral-800 rounded-lg' title="Share" >
@@ -212,16 +212,16 @@ const Product = () => {
         </div>
 
         <div className='w-[90%] m-auto mb-20'>
-          <h1 className='text-2xl sm:text-3xl md:text-[2.5vw] font-[Monsterat] mb-8 text-gray-900'>REVIEWS</h1>
+          <h1 className='text-2xl sm:text-3xl md:text-[2.5vw] font-[Gambarino] mb-8 text-gray-900'>REVIEWS</h1>
 
           <div className='flex flex-col md:flex-row gap-8 md:gap-10'>
             <div className='w-full md:w-1/2'>
               <form onSubmit={handleSubmitReview} className='mt-2'>
                 {renderStars()}
 
-                <textarea value={newReview} onChange={(e) => setNewReview(e.target.value)} className='w-full h-[20vh] rounded-lg bg-neutral-200 p-4 font-[Monsterat] placeholder:text-neutral-400 text-neutral-900' placeholder={user ? 'Write a review......' : 'Please login to write a review'} disabled={!user || isSubmitting} />
+                <textarea value={newReview} onChange={(e) => setNewReview(e.target.value)} className='w-full h-[20vh] rounded-lg bg-white/90 border border-white p-4 font-[SourceSans] placeholder:text-neutral-400 text-neutral-900' placeholder={user ? 'Write a review......' : 'Please login to write a review'} disabled={!user || isSubmitting} />
 
-                <button type="submit" disabled={!user || isSubmitting} className='mt-4 w-full sm:w-auto bg-neutral-900 text-white px-6 py-2 uppercase font-[Monsterat] text-sm disabled:opacity-50 rounded-lg hover:bg-neutral-800' >
+                <button type="submit" disabled={!user || isSubmitting} className='mt-4 w-full sm:w-auto bg-neutral-900 text-white px-6 py-2 uppercase font-[SourceSans] tracking-[0.12em] text-sm disabled:opacity-50 rounded-lg hover:bg-neutral-800' >
                   {isSubmitting ? 'Submitting...' : 'Submit Review'}
                 </button>
               </form>
@@ -239,7 +239,7 @@ const Product = () => {
           </div>
 
           <div className='mt-20'>
-            <h2 className='text-xl sm:text-2xl md:text-3xl font-[Monsterat] mb-8 text-gray-900'>RELATED PRODUCTS</h2>
+            <h2 className='text-xl sm:text-2xl md:text-3xl font-[Gambarino] mb-8 text-gray-900'>RELATED PRODUCTS</h2>
             <RelatedProducts Category={productData.Category} Condition={productData.Condition} />
           </div>
         </div>

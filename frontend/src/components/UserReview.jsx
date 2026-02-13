@@ -14,7 +14,7 @@ const UserReview = ({ review, onDelete, canDelete }) => {
   };
 
   return (
-    <div className='p-4 rounded-sm'>
+    <div className='p-4 rounded-2xl border border-white/85 bg-white/80 font-[SourceSans] shadow-sm'>
       <div className='flex justify-between items-center mb-2'>
         <div className='flex gap-4 items-center'>
           <div className='w-10 h-10 bg-red-200 rounded-full flex items-center justify-center'>
@@ -23,13 +23,13 @@ const UserReview = ({ review, onDelete, canDelete }) => {
             </span>
           </div>
           <div>
-            <h3 className='font-medium font-[Monsterat]'>{review.userId.name}</h3>
+            <h3 className='font-medium font-[Gambarino] text-neutral-900'>{review.userId.name}</h3>
             <div className='flex gap-1'>
               {renderStars(review.rating)}
             </div>
           </div>
         </div>
-        <div className='flex items-center gap-4'>
+        <div className='flex items-center gap-4 text-neutral-600'>
           <span className='text-sm'>
             {formatDate(review.createdAt)}
           </span>
@@ -40,7 +40,7 @@ const UserReview = ({ review, onDelete, canDelete }) => {
           )}
         </div>
       </div>
-      <p className='text-neutral-900 ml-14'>{review.review}</p>
+      <p className='text-neutral-800 ml-14'>{review.review}</p>
     </div>
   )
 }

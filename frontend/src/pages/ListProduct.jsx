@@ -29,19 +29,19 @@ const ListProduct = () => {
   }, [token]);
 
   return (
-    <div className='w-full min-h-screen'>
-      <div className='w-[90%] m-auto pt-32'>
+    <div className='w-full min-h-screen p-4 sm:p-6 md:p-8 pt-24 md:pt-28'>
+      <div className='w-full m-auto'>
         <div className='flex justify-between items-center mb-8'>
-          <h1 className='font-["Monsterat"] text-5xl font-medium'>SALES HISTORY</h1>
+          <h1 className='font-[Gambarino] text-4xl md:text-5xl text-neutral-900'>SALES HISTORY</h1>
         </div>
-        <div className='overflow-x-auto'>
+        <div className='overflow-x-auto rounded-2xl border border-white/90 bg-white/85 p-2 sm:p-4 shadow-sm'>
           {loading ? (
             <div className="text-center py-8">Loading products...</div>
           ) : products.length === 0 ? (
             <div className="text-center py-8">No products listed yet</div>
           ) : (
             <table className='w-full'>
-              <thead className='bg-neutral-100'>
+              <thead className='bg-neutral-100/90 rounded-xl'>
                 <tr className='flex justify-between items-center'>
                   <th className='p-4 text-left w-[300px]'>PRODUCT</th>
                   <th className='p-4 text-left w-[100px]'>PRICE</th>

@@ -71,12 +71,12 @@ const Profile = () => {
 
   return (
     <>
-      <div className='w-[calc(100%+4vw)] -mx-4 sm:w-[calc(100%+10vw)] sm:-mx-[5vw] md:w-[calc(100%+14vw)] md:-mx-[7vw] lg:w-[calc(100%+4vw)] lg:-mx-[2vw] min-h-screen bg-white'>
-        <div className='w-[90%] md:w-[80%] m-auto flex flex-col gap-8 pt-24 md:pt-32'>
+      <div className='app-page'>
+        <div className='app-page-content app-surface w-full m-auto flex flex-col gap-8 pt-24 md:pt-28 p-4 sm:p-6 md:p-8'>
           
           <div className='flex flex-col sm:flex-row justify-between items-center gap-4'>
-            <h1 className='font-["Monsterat"] text-3xl md:text-5xl font-semibold text-center sm:text-left'>ACCOUNT</h1>
-            <button onClick={handleLogout} className='font-["Monsterat"] text-sm px-6 py-3 bg-red-500 transition-all text-white w-full sm:w-auto'>
+            <h1 className='font-[Gambarino] text-3xl md:text-5xl text-center sm:text-left text-neutral-900'>ACCOUNT</h1>
+            <button onClick={handleLogout} className='font-[SourceSans] text-sm tracking-[0.12em] px-6 py-3 bg-red-600 transition-all text-white rounded-lg w-full sm:w-auto'>
               LOGOUT
             </button>
           </div>
@@ -92,8 +92,8 @@ const Profile = () => {
 
           <div className='flex flex-col gap-4 font-["SourceSans"] mb-14'>
             <div className='flex flex-col sm:flex-row justify-between items-center gap-4'>
-              <h2 className='text-2xl md:text-3xl font-[Monsterat] font-medium text-center sm:text-left'>RECENT ORDERS</h2>
-              <NavLink to='/all-orders' className='font-[Monsterat] text-sm px-6 py-3 bg-black text-white transition-all w-full sm:w-auto text-center'>
+              <h2 className='text-2xl md:text-3xl font-[Gambarino] text-center sm:text-left text-neutral-900'>RECENT ORDERS</h2>
+              <NavLink to='/all-orders' className='font-[SourceSans] tracking-[0.12em] text-sm px-6 py-3 bg-neutral-900 rounded-lg text-white transition-all w-full sm:w-auto text-center'>
                 VIEW ALL
               </NavLink>
             </div>
@@ -108,17 +108,17 @@ const Profile = () => {
           {user?.isSeller && (
             <div className='flex flex-col gap-4 font-["SourceSans"] mb-20'>
               <div className='flex flex-col sm:flex-row justify-between items-center gap-4'>
-                <h2 className='text-2xl md:text-3xl font-[Monsterat] font-medium text-center sm:text-left'>SELL A BOOK</h2>
-                <NavLink to='/sell' className='font-["Monsterat"] text-sm px-6 py-3 bg-black text-white transition-all w-full sm:w-auto text-center'>
+                <h2 className='text-2xl md:text-3xl font-[Gambarino] text-center sm:text-left text-neutral-900'>SELL A BOOK</h2>
+                <NavLink to='/sell' className='font-[SourceSans] tracking-[0.12em] text-sm px-6 py-3 bg-neutral-900 rounded-lg text-white transition-all w-full sm:w-auto text-center'>
                   MANAGE ORDERS
                 </NavLink>
               </div>
 
               <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4'>
                 {sellerProducts.slice(0, 4).map((product) => (
-                  <div key={product._id} className='p-4 rounded-sm bg-neutral-100 cursor-pointer hover:bg-neutral-200 transition-all' onClick={() => handleProductClick(product)}>
+                  <div key={product._id} className='p-4 rounded-xl border border-white bg-white/80 cursor-pointer hover:bg-white transition-all' onClick={() => handleProductClick(product)}>
                     <img src={product.image && product.image[0] ? product.image[0] : ''} alt={product.name} className='w-full h-48 object-contain object-center rounded-sm'/>
-                    <h3 className='font-medium mt-2 font-[Monsterat]'>{product.name}</h3>
+                    <h3 className='font-medium mt-2 font-[Gambarino]'>{product.name}</h3>
                     <div className='flex w-full justify-between items-center'>
                       <p className='text-neutral-500'>₹{product.price}</p>
                       <p className='text-neutral-500'>{new Date(product.date).toLocaleDateString()}</p>

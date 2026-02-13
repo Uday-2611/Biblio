@@ -9,7 +9,8 @@ const Sell = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   return (
-    <div className='w-[calc(100%+4vw)] -mx-4 sm:w-[calc(100%+10vw)] sm:-mx-[5vw] md:w-[calc(100%+14vw)] md:-mx-[7vw] lg:w-[calc(100%+4vw)] lg:-mx-[2vw] flex min-h-screen bg-white relative'>
+    <div className='app-page'>
+      <div className='app-page-content app-surface flex min-h-screen relative p-0'>
       {/* Mobile Menu Button */}
       <button className="md:hidden fixed top-24 left-4 z-50 text-2xl bg-white p-2 rounded-full shadow-lg" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} >
         <i className={`ri-${isMobileMenuOpen ? 'close' : 'menu'}-line`}></i>
@@ -21,7 +22,7 @@ const Sell = () => {
       </div>
 
       {/* Main Content */}
-      <main className='w-full md:w-3/4 min-h-screen'>
+      <main className='w-full md:w-3/4 min-h-screen bg-transparent'>
         <Routes>
           <Route index element={<SellProduct />} />
           <Route path="list-products" element={<ListProduct />} />
@@ -34,6 +35,7 @@ const Sell = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
           onClick={() => setIsMobileMenuOpen(false)} />
       )}
+      </div>
     </div>
   );
 };
