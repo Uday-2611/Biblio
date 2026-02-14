@@ -17,6 +17,7 @@ export const corsOptions = {
 
         // If no allow-list is configured, keep behavior open for now.
         if (allowList.length === 0) {
+            console.warn('[security] CORS_ORIGINS not configured – allowing all origins');
             return callback(null, true);
         }
 
@@ -38,6 +39,18 @@ export const securityHeaders = (req, res, next) => {
 
 export const createRateLimiter = ({ windowMs, max, message }) => {
     const buckets = new Map();
+    const cleanupInterval = setInterval(() => {
+        const now = Date.now();
+        for (const [key, entry] of buckets.entries()) {
+            if (now > entry.resetAt) {
+                buckets.delete(key);
+            }
+        }
+    }, windowMs);
+
+    if (typeof cleanupInterval.unref === 'function') {
+        cleanupInterval.unref();
+    }
 
     return (req, res, next) => {
         const key = req.ip || req.socket.remoteAddress || 'unknown';

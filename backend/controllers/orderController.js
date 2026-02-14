@@ -52,6 +52,7 @@ const hasValidAddress = (address) => {
 
 // Place order ->
 const placeOrder = async (req, res) => {
+    const session = await mongoose.startSession();
     try {
         const userId = req.user._id.toString();
         const { items = [], address = {}, paymentMethod } = req.body;
@@ -86,75 +87,107 @@ const placeOrder = async (req, res) => {
             });
         }
 
-        const productIds = [...new Set(normalizedItems.map((item) => item.productId.toString()))];
-        const products = await productModel.find({ _id: { $in: productIds } });
-        const productMap = new Map(products.map((product) => [product._id.toString(), product]));
+        let createdOrders = [];
+        await session.withTransaction(async () => {
+            const productIds = [...new Set(normalizedItems.map((item) => item.productId.toString()))];
+            const products = await productModel.find({ _id: { $in: productIds } }).session(session);
+            const productMap = new Map(products.map((product) => [product._id.toString(), product]));
 
-        const orderItems = [];
-        let subtotal = 0;
+            const itemsBySeller = new Map();
 
-        for (const item of normalizedItems) {
-            const product = productMap.get(item.productId.toString());
-            if (!product) {
-                return res.status(400).json({
-                    success: false,
-                    message: 'One or more products are invalid'
+            for (const item of normalizedItems) {
+                const product = productMap.get(item.productId.toString());
+                if (!product) {
+                    throw new Error('One or more products are invalid');
+                }
+
+                const availableStock = Number.isFinite(product.stock) ? product.stock : 0;
+                if (item.quantity > availableStock) {
+                    throw new Error(`Insufficient stock for "${product.name}"`);
+                }
+
+                const stockUpdate = await productModel.updateOne(
+                    { _id: product._id, stock: { $gte: item.quantity } },
+                    { $inc: { stock: -item.quantity } },
+                    { session }
+                );
+
+                if (stockUpdate.modifiedCount !== 1) {
+                    throw new Error(`Insufficient stock for "${product.name}"`);
+                }
+
+                const sellerKey = product.sellerId.toString();
+                if (!itemsBySeller.has(sellerKey)) {
+                    itemsBySeller.set(sellerKey, {
+                        sellerId: product.sellerId,
+                        items: [],
+                        subtotal: 0
+                    });
+                }
+
+                const sellerBucket = itemsBySeller.get(sellerKey);
+                sellerBucket.items.push({
+                    _id: product._id.toString(),
+                    name: product.name,
+                    price: Number(product.price),
+                    quantity: item.quantity,
+                    image: product.image,
+                    sellerId: product.sellerId
                 });
+                sellerBucket.subtotal += Number(product.price) * item.quantity;
             }
 
-            orderItems.push({
-                _id: product._id.toString(),
-                name: product.name,
-                price: Number(product.price),
-                quantity: item.quantity,
-                image: product.image,
-                sellerId: product.sellerId
+            const orderGroups = [...itemsBySeller.values()];
+            createdOrders = [];
+
+            orderGroups.forEach((group, index) => {
+                createdOrders.push({
+                    userId,
+                    sellerId: group.sellerId,
+                    items: group.items,
+                    amount: group.subtotal + (index === 0 ? DELIVERY_FEE : 0),
+                    address: safeAddress,
+                    paymentMethod,
+                    payment: false,
+                    date: Date.now(),
+                    status: 'Order Placed'
+                });
             });
 
-            subtotal += Number(product.price) * item.quantity;
-        }
-
-        const orderData = {
-            userId,
-            items: orderItems,
-            amount: subtotal + DELIVERY_FEE,
-            address: safeAddress,
-            paymentMethod,
-            payment: false,
-            date: Date.now(),
-            status: 'Order Placed'
-        };
-
-        const newOrder = new orderModel(orderData);
-        await newOrder.save();
-
-        await userModel.findByIdAndUpdate(req.user._id, {
-            cartData: {}
+            await orderModel.insertMany(createdOrders, { session });
+            await userModel.findByIdAndUpdate(req.user._id, { cartData: {} }, { session });
         });
 
         return res.status(201).json({
             success: true,
             message: 'Order placed successfully',
-            order: newOrder
+            orders: createdOrders
         });
     } catch (error) {
-        return res.status(500).json({
+        console.error('placeOrder error:', error);
+        const lowerMessage = String(error.message || '').toLowerCase();
+        const isValidation = lowerMessage.includes('stock') || lowerMessage.includes('invalid');
+        const message = isValidation ? error.message : 'An error occurred while placing the order';
+
+        return res.status(isValidation ? 400 : 500).json({
             success: false,
-            message: error.message
+            message
         });
+    } finally {
+        await session.endSession();
     }
 };
 
 // Get all orders for current seller ->
 const allOrders = async (req, res) => {
     try {
-        const orders = await orderModel.find({}).sort({ date: -1 });
-
-        const sellerOrders = orders.filter((order) =>
-            order.items.some(
-                (item) => item.sellerId && item.sellerId.toString() === req.user._id.toString()
-            )
-        );
+        const sellerId = req.user._id;
+        const sellerOrders = await orderModel.find({
+            $or: [
+                { sellerId },
+                { 'items.sellerId': sellerId } // backward compatibility with old orders
+            ]
+        }).sort({ date: -1 });
 
         return res.status(200).json({ success: true, orders: sellerOrders });
     } catch (error) {
@@ -196,11 +229,13 @@ const updateStatus = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Order not found' });
         }
 
-        const ownsAtLeastOneItem = order.items.some(
-            (item) => item.sellerId && item.sellerId.toString() === req.user._id.toString()
-        );
+        const sellerOwnsOrder = order.sellerId
+            ? order.sellerId.toString() === req.user._id.toString()
+            : order.items.every(
+                (item) => item.sellerId && item.sellerId.toString() === req.user._id.toString()
+            );
 
-        if (!ownsAtLeastOneItem) {
+        if (!sellerOwnsOrder) {
             return res.status(403).json({ success: false, message: 'You cannot update this order' });
         }
 

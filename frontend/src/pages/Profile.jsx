@@ -20,6 +20,7 @@ const Profile = () => {
     clerkUser?.firstName ||
     user?.name ||
     'Not Available';
+  const avatarInitial = displayName?.charAt(0)?.toUpperCase() || 'U';
 
   const handleLogout = () => {
     logout();
@@ -92,11 +93,17 @@ const Profile = () => {
           <hr />
 
           <div className='flex items-center gap-4 font-["SourceSans"]'>
-            <img
-              src={clerkUser?.imageUrl}
-              alt={displayName}
-              className='h-14 w-14 rounded-full object-cover border border-neutral-200 bg-white'
-            />
+            {clerkUser?.imageUrl ? (
+              <img
+                src={clerkUser.imageUrl}
+                alt={displayName}
+                className='h-14 w-14 rounded-full object-cover border border-neutral-200 bg-white'
+              />
+            ) : (
+              <div className='h-14 w-14 rounded-full border border-neutral-200 bg-neutral-100 flex items-center justify-center text-neutral-600 text-lg font-semibold'>
+                {avatarInitial}
+              </div>
+            )}
             <p className='text-base md:text-lg'><span>Welcome </span>{displayName}</p>
           </div>
 

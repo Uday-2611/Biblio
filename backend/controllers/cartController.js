@@ -19,6 +19,9 @@ const isValidCartData = (cartData) => {
 const updateCart = async (req, res, next) => {
     try {
         const { cartData } = req.body;
+        if (!req.user?._id) {
+            return res.status(401).json({ success: false, message: 'Unauthorized' });
+        }
         const userId = req.user._id;
 
         if (!isValidCartData(cartData || {})) {

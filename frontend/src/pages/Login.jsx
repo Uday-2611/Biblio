@@ -12,7 +12,12 @@ const clerkAppearance = {
 };
 
 const Login = () => {
-  const [mode, setMode] = useState('signin');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const mode = searchParams.get('mode') === 'signup' ? 'signup' : 'signin';
+
+  const setMode = (newMode) => {
+    setSearchParams({ mode: newMode });
+  };
   const location = useLocation();
   const navigate = useNavigate();
   const from = location.state?.from?.pathname || '/home';
@@ -40,6 +45,7 @@ const Login = () => {
           <button
             type='button'
             onClick={() => setMode('signin')}
+            aria-pressed={mode === 'signin'}
             className={`w-1/2 rounded-md px-3 py-2 text-sm font-semibold tracking-[0.08em] ${mode === 'signin' ? 'bg-red-600 text-white' : 'text-neutral-700'}`}
           >
             SIGN IN
@@ -47,6 +53,7 @@ const Login = () => {
           <button
             type='button'
             onClick={() => setMode('signup')}
+            aria-pressed={mode === 'signup'}
             className={`w-1/2 rounded-md px-3 py-2 text-sm font-semibold tracking-[0.08em] ${mode === 'signup' ? 'bg-red-600 text-white' : 'text-neutral-700'}`}
           >
             SIGN UP

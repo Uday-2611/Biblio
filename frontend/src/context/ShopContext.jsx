@@ -1,6 +1,6 @@
 import axios from 'axios';
 import PropTypes from 'prop-types';
-import { createContext, useEffect, useState } from 'react';
+import { createContext, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth, useClerk } from '@clerk/clerk-react';
 import { toast } from 'react-toastify';
@@ -46,6 +46,7 @@ const ShopContextProvider = ({ children }) => {
     const [token, setToken] = useState('');
     const [user, setUser] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const initialCartLoadedRef = useRef(false);
 
     const requireAuth = () => {
         if (!isSignedIn) {
@@ -103,6 +104,7 @@ const ShopContextProvider = ({ children }) => {
             if (!isSignedIn) {
                 setToken('');
                 setUser(null);
+                initialCartLoadedRef.current = false;
                 setIsLoading(false);
                 return;
             }
@@ -125,7 +127,8 @@ const ShopContextProvider = ({ children }) => {
                 if (response.data.success) {
                     setUser(response.data.user);
 
-                    if (response.data.user.cartData && Object.keys(cartItems).length === 0) {
+                    if (response.data.user.cartData && !initialCartLoadedRef.current) {
+                        initialCartLoadedRef.current = true;
                         setCartItems(response.data.user.cartData);
                         localStorage.setItem('cartItems', JSON.stringify(response.data.user.cartData));
                     }

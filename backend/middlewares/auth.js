@@ -26,25 +26,57 @@ const authUser = async (req, res, next) => {
             const primaryEmail = clerkUser.emailAddresses.find(
                 (email) => email.id === clerkUser.primaryEmailAddressId
             )?.emailAddress || clerkUser.emailAddresses[0]?.emailAddress || '';
+            const displayName = buildName(clerkUser, primaryEmail);
 
-            const existingByEmail = primaryEmail
-                ? await userModel.findOne({ email: primaryEmail })
-                : null;
+            try {
+                // First try linking an existing legacy account by email.
+                if (primaryEmail) {
+                    user = await userModel.findOneAndUpdate(
+                        { email: primaryEmail },
+                        {
+                            $set: {
+                                clerkId: clerkUserId,
+                                isSeller: true
+                            },
+                            $setOnInsert: {
+                                name: displayName,
+                                cartData: {}
+                            }
+                        },
+                        { new: true }
+                    );
+                }
 
-            if (existingByEmail) {
-                existingByEmail.clerkId = clerkUserId;
-                existingByEmail.name = existingByEmail.name || buildName(clerkUser, primaryEmail);
-                existingByEmail.isSeller = true;
-                await existingByEmail.save();
-                user = existingByEmail;
-            } else {
-                user = await userModel.create({
-                    clerkId: clerkUserId,
-                    name: buildName(clerkUser, primaryEmail),
-                    email: primaryEmail,
-                    isSeller: true,
-                    cartData: {}
-                });
+                // If no account exists, atomically upsert by clerkId.
+                if (!user) {
+                    user = await userModel.findOneAndUpdate(
+                        { clerkId: clerkUserId },
+                        {
+                            $set: {
+                                isSeller: true
+                            },
+                            $setOnInsert: {
+                                clerkId: clerkUserId,
+                                name: displayName,
+                                email: primaryEmail || undefined,
+                                cartData: {}
+                            }
+                        },
+                        { new: true, upsert: true }
+                    );
+                }
+            } catch (dbError) {
+                // Handle duplicate key races from concurrent sign-ins.
+                if (dbError?.code === 11000) {
+                    user = await userModel.findOne({
+                        $or: [
+                            { clerkId: clerkUserId },
+                            ...(primaryEmail ? [{ email: primaryEmail }] : [])
+                        ]
+                    });
+                } else {
+                    throw dbError;
+                }
             }
         }
 

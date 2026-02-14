@@ -14,7 +14,7 @@ const getCurrentUser = async (req, res) => {
                 clerkId: req.user.clerkId,
                 name: req.user.name,
                 email: req.user.email,
-                isSeller: true,
+                isSeller: req.user.isSeller,
                 cartData: req.user.cartData || {}
             }
         });

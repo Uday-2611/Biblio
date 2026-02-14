@@ -9,16 +9,25 @@ const sanitizeText = (value, maxLen) => {
     return value.trim().slice(0, maxLen);
 };
 
+const parseProductDate = (date) => {
+    if (!date) return Date.now();
+    const parsed = new Date(date);
+    if (Number.isNaN(parsed.getTime())) return Date.now();
+    return parsed.getTime();
+};
+
 // Add product ->
 const addProduct = async (req, res) => {
     try {
-        const { name, author, price, Category, Condition, description, date } = req.body;
+        const { name, author, price, Category, Condition, description, date, stock } = req.body;
         const cleanName = sanitizeText(name, 120);
         const cleanAuthor = sanitizeText(author, 120);
         const cleanDescription = sanitizeText(description, 4000);
         const cleanCategory = sanitizeText(Category, 40);
         const cleanCondition = sanitizeText(Condition, 40);
         const parsedPrice = Number(price);
+        const parsedStock = stock === undefined ? 1 : Number(stock);
+        const productDate = parseProductDate(date);
 
         if (!cleanName || !cleanAuthor || !cleanDescription) {
             return res.status(400).json({
@@ -31,6 +40,13 @@ const addProduct = async (req, res) => {
             return res.status(400).json({
                 success: false,
                 message: 'Invalid price'
+            });
+        }
+
+        if (!Number.isInteger(parsedStock) || parsedStock < 0 || parsedStock > 1000) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid stock value'
             });
         }
 
@@ -78,12 +94,13 @@ const addProduct = async (req, res) => {
             name: cleanName,
             author: cleanAuthor,
             price: parsedPrice,
+            stock: parsedStock,
             Category: cleanCategory,
             Condition: cleanCondition,
             description: cleanDescription,
             image: images,
             sellerId: req.user._id,
-            date: date || new Date()
+            date: productDate
         });
 
         await newProduct.save();
@@ -108,7 +125,8 @@ const listProducts = async (req, res) => {
         }
         res.status(200).json({ success: true, products });
     } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
+        console.error('Error listing products:', error);
+        res.status(500).json({ success: false, message: 'Failed to retrieve products' });
     }
 };
 
