@@ -156,8 +156,7 @@ const Collection = () => {
           <div className='flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto'>
 
             <div className={`relative transition-all duration-300 ease-in-out w-full sm:w-auto ${showSearch ? 'opacity-100' : 'opacity-0 sm:opacity-100'}`}>
-              <input ref={searchInputRef} type="text" value={localSearch} onChange={handleSearch} placeholder="Search products..." className="w-full sm:w-64 bg-transparent border-b border-neutral-700 text-neutral-800 placeholder-neutral-500 focus:outline-none focus:border-neutral-900 transition-colors duration-200 py-2" />
-
+              <input ref={searchInputRef} type="text" value={localSearch} onChange={handleSearch} placeholder="Search products..." aria-label="Search products" className="w-full sm:w-64 bg-transparent border-b border-neutral-700 text-neutral-800 placeholder-neutral-500 focus:outline-none focus:border-neutral-900 transition-colors duration-200 py-2" />
               <button onClick={handleSearchClose} className="absolute right-0 top-1/2 -translate-y-1/2 text-neutral-700 hover:text-neutral-900 sm:hidden" aria-label="Close search" >
                 <i className="ri-close-line"></i>
               </button>
@@ -205,7 +204,7 @@ const Collection = () => {
 
       <div className={`fixed inset-0 bg-black transition-opacity duration-300 z-40 ${isFilterOpen ? 'opacity-50' : 'opacity-0 pointer-events-none'}`} onClick={() => setIsFilterOpen(false)} />
 
-      <div className={`fixed right-0 top-0 h-screen w-full sm:w-[400px] md:w-[30vw] bg-white/95 backdrop-blur-md shadow-2xl transform transition-transform duration-300 ease-in-out z-50 ${isFilterOpen ? 'translate-x-0' : 'translate-x-full'}`} >
+      <div className={`fixed right-0 top-0 h-screen w-full sm:w-[400px] lg:w-[30vw] lg:min-w-[400px] bg-white/95 backdrop-blur-md shadow-2xl transform transition-transform duration-300 ease-in-out z-50 ${isFilterOpen ? 'translate-x-0' : 'translate-x-full'}`} >
         <div className='p-6 h-full flex flex-col overflow-y-auto'>
           <div className='flex justify-between items-center mb-6'>
             <h1 className='text-2xl font-[Gambarino] text-neutral-900'>FILTERS</h1>

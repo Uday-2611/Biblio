@@ -21,8 +21,8 @@ const Order = ({ order, backendUrl, currency }) => {
     <div className='rounded-2xl border border-white/85 bg-white/80 p-6 font-[SourceSans] shadow-sm'>
       <div className='flex justify-between items-center mb-4'>
         <div>
-          <h3 className='font-[Gambarino] text-xl text-neutral-900'>ORDER #{order._id.slice(-6)}</h3>
-          <p className='text-neutral-600'>{new Date(order.date).toLocaleDateString()}</p>
+          <h3 className='font-[Gambarino] text-xl text-neutral-900'>ORDER #{order._id?.slice(-6) ?? 'N/A'}</h3>
+          <p className='text-neutral-600'>{order.date ? new Date(order.date).toLocaleDateString() : 'N/A'}</p>
         </div>
         <div className={`px-3 py-1 uppercase rounded-full text-xs font-semibold tracking-[0.1em] ${getStatusClasses(order.status)}`}>
           {order.status}
