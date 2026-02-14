@@ -2,6 +2,9 @@ import mongoose from 'mongoose';
 
 const connectDB = async () => {
     try {
+        mongoose.set('sanitizeFilter', true);
+        mongoose.set('strictQuery', true);
+
         mongoose.connection.on('connected', () => {
             console.log('Database Connected');
         });

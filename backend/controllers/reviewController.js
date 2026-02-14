@@ -1,17 +1,45 @@
 import reviewModel from "../models/reviewModel.js";
-import userModel from "../models/userModel.js";
+import mongoose from "mongoose";
+
+const sanitizeText = (value, maxLen = 1000) => {
+    if (typeof value !== 'string') return '';
+    return value.trim().slice(0, maxLen);
+};
 
 // Add a new review ->
 export const addReview = async (req, res) => {
     try {
         const { productId, rating, review } = req.body;
-        const userId = req.user.id;
+        const userId = req.user._id;
+        const parsedRating = Number(rating);
+        const cleanReview = sanitizeText(review, 1000);
+
+        if (!mongoose.Types.ObjectId.isValid(productId)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid product id'
+            });
+        }
+
+        if (!Number.isInteger(parsedRating) || parsedRating < 1 || parsedRating > 5) {
+            return res.status(400).json({
+                success: false,
+                message: 'Rating must be an integer between 1 and 5'
+            });
+        }
+
+        if (!cleanReview) {
+            return res.status(400).json({
+                success: false,
+                message: 'Review text is required'
+            });
+        }
 
         const newReview = new reviewModel({
             productId,
             userId,
-            rating,
-            review,
+            rating: parsedRating,
+            review: cleanReview,
             date: new Date()
         });
 
@@ -20,21 +48,21 @@ export const addReview = async (req, res) => {
         const populatedReview = await reviewModel.findById(newReview._id)
             .populate('userId', 'name');
 
-        res.status(201).json({
+        return res.status(201).json({
             success: true,
-            message: "Review added successfully",
+            message: 'Review added successfully',
             review: populatedReview
         });
     } catch (error) {
         if (error.code === 11000) {
             return res.status(400).json({
                 success: false,
-                message: "You have already reviewed this product"
+                message: 'You have already reviewed this product'
             });
         }
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
-            message: "Error adding review",
+            message: 'Error adding review',
             error: error.message
         });
     }
@@ -44,18 +72,25 @@ export const addReview = async (req, res) => {
 export const getProductReviews = async (req, res) => {
     try {
         const { productId } = req.params;
+        if (!mongoose.Types.ObjectId.isValid(productId)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid product id'
+            });
+        }
+
         const reviews = await reviewModel.find({ productId })
             .populate('userId', 'name')
             .sort({ date: -1 });
 
-        res.status(200).json({
+        return res.status(200).json({
             success: true,
             reviews
         });
     } catch (error) {
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
-            message: "Error fetching reviews",
+            message: 'Error fetching reviews',
             error: error.message
         });
     }
@@ -65,7 +100,14 @@ export const getProductReviews = async (req, res) => {
 export const deleteReview = async (req, res) => {
     try {
         const { reviewId } = req.params;
-        const userId = req.user.id;
+        const userId = req.user._id;
+
+        if (!mongoose.Types.ObjectId.isValid(reviewId)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid review id'
+            });
+        }
 
         const review = await reviewModel.findOneAndDelete({
             _id: reviewId,
@@ -75,18 +117,18 @@ export const deleteReview = async (req, res) => {
         if (!review) {
             return res.status(404).json({
                 success: false,
-                message: "Review not found or unauthorized"
+                message: 'Review not found or unauthorized'
             });
         }
 
-        res.status(200).json({
+        return res.status(200).json({
             success: true,
-            message: "Review deleted successfully"
+            message: 'Review deleted successfully'
         });
     } catch (error) {
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
-            message: "Error deleting review",
+            message: 'Error deleting review',
             error: error.message
         });
     }

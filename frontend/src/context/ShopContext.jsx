@@ -1,8 +1,9 @@
-import axios from "axios";
+import axios from 'axios';
 import PropTypes from 'prop-types';
-import { createContext, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { createContext, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth, useClerk } from '@clerk/clerk-react';
+import { toast } from 'react-toastify';
 
 export const ShopContext = createContext({
     products: [],
@@ -24,19 +25,30 @@ export const ShopContext = createContext({
     setToken: () => { },
     user: null,
     setUser: () => { },
-    loginUser: () => { },
-    registerUser: () => { },
     logout: () => { },
-    requireAuth: () => { },
+    requireAuth: () => false,
     fetchProducts: () => { },
-    sendResetCode: () => { },
-    resetPassword: () => { },
     isLoading: true,
 });
 
 const ShopContextProvider = ({ children }) => {
+    const navigate = useNavigate();
+    const backendUrl = 'https://pageturner-backend.onrender.com';
+    const { isLoaded: authLoaded, isSignedIn, getToken } = useAuth();
+    const { signOut } = useClerk();
+
+    const currency = '$';
+    const delivery_fee = 10;
+    const [search, setSearch] = useState('');
+    const [showSearch, setShowSearch] = useState(false);
+    const [cartItems, setCartItems] = useState({});
+    const [products, setProducts] = useState([]);
+    const [token, setToken] = useState('');
+    const [user, setUser] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+
     const requireAuth = () => {
-        if (!token) {
+        if (!isSignedIn) {
             if (window.location.pathname !== '/login') {
                 toast.error('Please login first');
                 navigate('/login');
@@ -46,21 +58,9 @@ const ShopContextProvider = ({ children }) => {
         return true;
     };
 
-    const currency = '$';
-    const delivery_fee = 10;
-    const [search, setSearch] = useState('');
-    const [showSearch, setShowSearch] = useState(false)
-    const [cartItems, setCartItems] = useState({});
-    const [products, setProducts] = useState([]);
-    const navigate = useNavigate();
-    const backendUrl = "https://pageturner-backend.onrender.com";
-    const [token, setToken] = useState(localStorage.getItem('token') || '');
-    const [user, setUser] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
-
     const fetchProducts = async () => {
         try {
-            const response = await axios.get(backendUrl + '/api/product/list');
+            const response = await axios.get(`${backendUrl}/api/product/list`);
             if (response.data.success) {
                 setProducts(response.data.products);
             }
@@ -72,65 +72,84 @@ const ShopContextProvider = ({ children }) => {
 
     useEffect(() => {
         fetchProducts();
-    }, [token]);
+    }, []);
+
+    useEffect(() => {
+        const storedCartItems = localStorage.getItem('cartItems');
+        if (!storedCartItems) {
+            return;
+        }
+
+        try {
+            const parsedCart = JSON.parse(storedCartItems);
+            if (Object.keys(parsedCart).length === 0) {
+                localStorage.removeItem('cartItems');
+                setCartItems({});
+            } else {
+                setCartItems(parsedCart);
+            }
+        } catch {
+            localStorage.removeItem('cartItems');
+            setCartItems({});
+        }
+    }, []);
 
     useEffect(() => {
         const fetchUserData = async () => {
-            const storedToken = localStorage.getItem('token');
-            const storedCartItems = localStorage.getItem('cartItems');
-            
-            if (storedCartItems) {
-                try {
-                    const parsedCart = JSON.parse(storedCartItems);
-                    if (Object.keys(parsedCart).length === 0) {
-                        localStorage.removeItem('cartItems');
-                        setCartItems({});
-                    } else {
-                        setCartItems(parsedCart);
-                    }
-                } catch {
-                    localStorage.removeItem('cartItems');
-                    setCartItems({});
-                }
+            if (!authLoaded) {
+                return;
             }
-            
-            if (storedToken) {
-                try {
-                    const response = await axios.get(`${backendUrl}/api/user/current`, {
-                        headers: { token: storedToken }
-                    });
 
-                    if (response.data.success) {
-                        setToken(storedToken);
-                        setUser(response.data.user);
-                        if (response.data.user.cartData && Object.keys(cartItems).length === 0) {
-                            setCartItems(response.data.user.cartData);
-                            localStorage.setItem('cartItems', JSON.stringify(response.data.user.cartData));
-                        }
-                    } else {
-                        if (window.location.pathname !== '/login') {
-                            logout();
-                        }
-                    }
-                } catch (error) {
-                    console.error('Error fetching user data:', error);
-                    if (window.location.pathname !== '/login') {
-                        logout();
-                    }
-                }
+            if (!isSignedIn) {
+                setToken('');
+                setUser(null);
+                setIsLoading(false);
+                return;
             }
-            setIsLoading(false);
+
+            try {
+                const sessionToken = await getToken();
+                if (!sessionToken) {
+                    setToken('');
+                    setUser(null);
+                    setIsLoading(false);
+                    return;
+                }
+
+                setToken(sessionToken);
+
+                const response = await axios.get(`${backendUrl}/api/user/current`, {
+                    headers: { token: sessionToken }
+                });
+
+                if (response.data.success) {
+                    setUser(response.data.user);
+
+                    if (response.data.user.cartData && Object.keys(cartItems).length === 0) {
+                        setCartItems(response.data.user.cartData);
+                        localStorage.setItem('cartItems', JSON.stringify(response.data.user.cartData));
+                    }
+                } else {
+                    setUser(null);
+                }
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+                setUser(null);
+            } finally {
+                setIsLoading(false);
+            }
         };
 
         fetchUserData();
-    }, [backendUrl]);
+    }, [authLoaded, isSignedIn, backendUrl]);
 
     useEffect(() => {
         const syncCart = async () => {
-            if (token && user) {
+            if (isSignedIn && token && user) {
                 try {
-                    await axios.post(`${backendUrl}/api/cart/update`,
-                        { userId: user.id, cartData: cartItems },
+                    await axios.post(
+                        `${backendUrl}/api/cart/update`,
+                        { cartData: cartItems },
                         { headers: { token } }
                     );
                     localStorage.setItem('cartItems', JSON.stringify(cartItems));
@@ -141,16 +160,17 @@ const ShopContextProvider = ({ children }) => {
                 localStorage.setItem('cartItems', JSON.stringify(cartItems));
             }
         };
-        syncCart();
-    }, [cartItems, token, user]);
 
-    const logout = () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+        syncCart();
+    }, [cartItems, token, user, isSignedIn, backendUrl]);
+
+    const logout = async () => {
         localStorage.removeItem('cartItems');
         setToken('');
         setUser(null);
         setCartItems({});
+        await signOut();
+
         if (window.location.pathname !== '/login') {
             navigate('/login');
         }
@@ -188,99 +208,6 @@ const ShopContextProvider = ({ children }) => {
         }, 0);
     };
 
-    const sendResetCode = async (email) => {
-        try {
-            const response = await axios.post(`${backendUrl}/api/user/forgot-password`, { email });
-            if (response.data.success) {
-                toast.success('Reset code sent to your email');
-                return true;
-            } else {
-                toast.error(response.data.message);
-                return false;
-            }
-        } catch (error) {
-            toast.error(error.response?.data?.message || 'Failed to send reset code');
-            return false;
-        }
-    }
-
-    const resetPassword = async (email, code, newPassword) => {
-        try {
-            const response = await axios.post(`${backendUrl}/api/user/reset-password`, {
-                email,
-                code,
-                newPassword
-            });
-            if (response.data.success) {
-                toast.success('Password reset successfully');
-                return true;
-            } else {
-                toast.error(response.data.message);
-                return false;
-            }
-        } catch (error) {
-            toast.error(error.response?.data?.message || 'Failed to reset password');
-            return false;
-        }
-    }
-
-    const loginUser = async (email, password) => {
-        try {
-            const response = await axios.post(`${backendUrl}/api/user/login`, { email, password });
-            if (response.data.success) {
-                localStorage.removeItem('token');
-                localStorage.removeItem('user');
-                localStorage.removeItem('cartItems');
-
-                localStorage.setItem('token', response.data.token);
-                localStorage.setItem('user', JSON.stringify(response.data.user));
-                setToken(response.data.token);
-                setUser(response.data.user);
-                setCartItems({});
-
-                navigate('/home', { replace: true });
-                window.location.href = '/home';
-            } else {
-                toast.error(response.data.message);
-            }
-        } catch (error) {
-            toast.error(error.response?.data?.message || 'Login failed');
-        }
-    }
-
-    const registerUser = async (name, email, password) => {
-        try {
-            const response = await axios.post(`${backendUrl}/api/user/register`, { name, email, password });
-            if (response.data.success) {
-                localStorage.removeItem('token');
-                localStorage.removeItem('user');
-                localStorage.removeItem('cartItems');
-
-                localStorage.setItem('token', response.data.token);
-                localStorage.setItem('user', JSON.stringify(response.data.user));
-                setToken(response.data.token);
-                setUser(response.data.user);
-                setCartItems({});
-
-                navigate('/home', { replace: true });
-                window.location.href = '/home';
-            } else {
-                toast.error(response.data.message);
-            }
-        } catch (error) {
-            const errorMessage = error.response?.data?.message || 'Registration failed';
-            if (errorMessage.toLowerCase().includes('already exists')) {
-                toast.error('An account with this email already exists');
-            } else {
-                toast.error(errorMessage);
-            }
-        }
-    }
-
-    useEffect(() => {
-        window.scrollTo(0, 0);
-    }, [window.location.pathname]);
-
     const value = {
         products,
         currency,
@@ -301,15 +228,11 @@ const ShopContextProvider = ({ children }) => {
         setToken,
         user,
         setUser,
-        loginUser,
-        registerUser,
         logout,
         requireAuth,
         fetchProducts,
-        sendResetCode,
-        resetPassword,
         isLoading
-    }
+    };
 
     if (isLoading) {
         return null;

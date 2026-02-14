@@ -1,5 +1,6 @@
 import { useContext, useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
+import { useUser } from '@clerk/clerk-react';
 import { ShopContext } from '../context/ShopContext';
 import { toast } from 'react-toastify';
 import axios from 'axios';
@@ -7,11 +8,18 @@ import Order from '../components/Order';
 
 const Profile = () => {
   const { navigate, logout, user, backendUrl, token } = useContext(ShopContext);
+  const { user: clerkUser } = useUser();
   const [sellerProducts, setSellerProducts] = useState([]);
   const [recentOrders, setRecentOrders] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [showReviews, setShowReviews] = useState(false);
   const [reviews, setReviews] = useState([]);
+
+  const displayName =
+    clerkUser?.fullName ||
+    clerkUser?.firstName ||
+    user?.name ||
+    'Not Available';
 
   const handleLogout = () => {
     logout();
@@ -83,11 +91,13 @@ const Profile = () => {
 
           <hr />
 
-          <div className='flex flex-col gap-4 font-["SourceSans"]'>
-            <div className='flex flex-col gap-2'>
-              <p className='text-base md:text-lg'><span>Welcome </span> {user?.name || 'Not Available'}</p>
-              <p className='text-base md:text-lg'><span>Member Email:</span> {user?.email || 'Not Available'}</p>
-            </div>
+          <div className='flex items-center gap-4 font-["SourceSans"]'>
+            <img
+              src={clerkUser?.imageUrl}
+              alt={displayName}
+              className='h-14 w-14 rounded-full object-cover border border-neutral-200 bg-white'
+            />
+            <p className='text-base md:text-lg'><span>Welcome </span>{displayName}</p>
           </div>
 
           <div className='flex flex-col gap-4 font-["SourceSans"] mb-14'>

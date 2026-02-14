@@ -1,10 +1,53 @@
 import { cloudinary } from "../config/cloudinary.js";
 import productModel from "../models/productModel.js";
 
+const CATEGORY_ALLOWLIST = new Set(['Fiction', 'Non-Fiction', 'Academic']);
+const CONDITION_ALLOWLIST = new Set(['New', 'Like-New', 'Good', 'Fair']);
+
+const sanitizeText = (value, maxLen) => {
+    if (typeof value !== 'string') return '';
+    return value.trim().slice(0, maxLen);
+};
+
 // Add product ->
 const addProduct = async (req, res) => {
     try {
         const { name, author, price, Category, Condition, description, date } = req.body;
+        const cleanName = sanitizeText(name, 120);
+        const cleanAuthor = sanitizeText(author, 120);
+        const cleanDescription = sanitizeText(description, 4000);
+        const cleanCategory = sanitizeText(Category, 40);
+        const cleanCondition = sanitizeText(Condition, 40);
+        const parsedPrice = Number(price);
+
+        if (!cleanName || !cleanAuthor || !cleanDescription) {
+            return res.status(400).json({
+                success: false,
+                message: 'Name, author and description are required'
+            });
+        }
+
+        if (!Number.isFinite(parsedPrice) || parsedPrice <= 0 || parsedPrice > 100000) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid price'
+            });
+        }
+
+        if (!CATEGORY_ALLOWLIST.has(cleanCategory)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid category'
+            });
+        }
+
+        if (!CONDITION_ALLOWLIST.has(cleanCondition)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid condition'
+            });
+        }
+
         const images = [];
         
         // Upload images to Cloudinary
@@ -32,12 +75,12 @@ const addProduct = async (req, res) => {
         }
 
         const newProduct = new productModel({
-            name,
-            author,
-            price: Number(price),
-            Category,
-            Condition,
-            description,
+            name: cleanName,
+            author: cleanAuthor,
+            price: parsedPrice,
+            Category: cleanCategory,
+            Condition: cleanCondition,
+            description: cleanDescription,
             image: images,
             sellerId: req.user._id,
             date: date || new Date()
@@ -63,9 +106,9 @@ const listProducts = async (req, res) => {
         } else {
             products = await productModel.find();
         }
-        res.json({ success: true, products });
+        res.status(200).json({ success: true, products });
     } catch (error) {
-        res.json({ success: false, message: error.message });
+        res.status(500).json({ success: false, message: error.message });
     }
 };
 

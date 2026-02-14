@@ -50,8 +50,10 @@ const PlaceOrder = () => {
 
       const orderData = {
         address: formData,
-        items: orderItems,
-        amount: getCartAmount() + delivery_fee,
+        items: orderItems.map((item) => ({
+          productId: item._id,
+          quantity: item.quantity
+        })),
         paymentMethod: 'cod'
       }
 
