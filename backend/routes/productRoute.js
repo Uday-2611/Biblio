@@ -1,11 +1,12 @@
 import express from 'express';
 import { addProduct, listProducts } from '../controllers/productController.js';
 import upload from '../middlewares/multer.js';
-import authMiddleware from '../middlewares/authMiddleware.js';
+import authUser from '../middlewares/auth.js';
+import { writeLimiter } from '../middlewares/security.js';
 
 const productRouter = express.Router();
 
-productRouter.post('/add', authMiddleware, upload.fields([
+productRouter.post('/add', authUser, writeLimiter, upload.fields([
     { name: 'image1', maxCount: 1 },
     { name: 'image2', maxCount: 1 },
     { name: 'image3', maxCount: 1 },
@@ -13,6 +14,6 @@ productRouter.post('/add', authMiddleware, upload.fields([
 ]), addProduct);
 
 productRouter.get('/list', listProducts);
-productRouter.get('/my-products', authMiddleware, listProducts);
+productRouter.get('/my-products', authUser, listProducts);
 
 export default productRouter;

@@ -1,10 +1,69 @@
 import { cloudinary } from "../config/cloudinary.js";
 import productModel from "../models/productModel.js";
 
+const CATEGORY_ALLOWLIST = new Set(['Fiction', 'Non-Fiction', 'Academic']);
+const CONDITION_ALLOWLIST = new Set(['New', 'Like-New', 'Good', 'Fair']);
+
+const sanitizeText = (value, maxLen) => {
+    if (typeof value !== 'string') return '';
+    return value.trim().slice(0, maxLen);
+};
+
+const parseProductDate = (date) => {
+    if (!date) return Date.now();
+    const parsed = new Date(date);
+    if (Number.isNaN(parsed.getTime())) return Date.now();
+    return parsed.getTime();
+};
+
 // Add product ->
 const addProduct = async (req, res) => {
     try {
-        const { name, author, price, Category, Condition, description, date } = req.body;
+        const { name, author, price, Category, Condition, description, date, stock } = req.body;
+        const cleanName = sanitizeText(name, 120);
+        const cleanAuthor = sanitizeText(author, 120);
+        const cleanDescription = sanitizeText(description, 4000);
+        const cleanCategory = sanitizeText(Category, 40);
+        const cleanCondition = sanitizeText(Condition, 40);
+        const parsedPrice = Number(price);
+        const parsedStock = stock === undefined ? 1 : Number(stock);
+        const productDate = parseProductDate(date);
+
+        if (!cleanName || !cleanAuthor || !cleanDescription) {
+            return res.status(400).json({
+                success: false,
+                message: 'Name, author and description are required'
+            });
+        }
+
+        if (!Number.isFinite(parsedPrice) || parsedPrice <= 0 || parsedPrice > 100000) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid price'
+            });
+        }
+
+        if (!Number.isInteger(parsedStock) || parsedStock < 0 || parsedStock > 1000) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid stock value'
+            });
+        }
+
+        if (!CATEGORY_ALLOWLIST.has(cleanCategory)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid category'
+            });
+        }
+
+        if (!CONDITION_ALLOWLIST.has(cleanCondition)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid condition'
+            });
+        }
+
         const images = [];
         
         // Upload images to Cloudinary
@@ -32,15 +91,16 @@ const addProduct = async (req, res) => {
         }
 
         const newProduct = new productModel({
-            name,
-            author,
-            price: Number(price),
-            Category,
-            Condition,
-            description,
+            name: cleanName,
+            author: cleanAuthor,
+            price: parsedPrice,
+            stock: parsedStock,
+            Category: cleanCategory,
+            Condition: cleanCondition,
+            description: cleanDescription,
             image: images,
             sellerId: req.user._id,
-            date: date || new Date()
+            date: productDate
         });
 
         await newProduct.save();
@@ -63,9 +123,10 @@ const listProducts = async (req, res) => {
         } else {
             products = await productModel.find();
         }
-        res.json({ success: true, products });
+        res.status(200).json({ success: true, products });
     } catch (error) {
-        res.json({ success: false, message: error.message });
+        console.error('Error listing products:', error);
+        res.status(500).json({ success: false, message: 'Failed to retrieve products' });
     }
 };
 

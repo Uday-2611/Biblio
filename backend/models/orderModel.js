@@ -5,6 +5,11 @@ const orderSchema = new mongoose.Schema ({
         type: String,
         required: true,
     }, 
+    sellerId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'user',
+        required: true
+    },
     items: [{
         _id: String,
         name: String,
@@ -49,6 +54,9 @@ const orderSchema = new mongoose.Schema ({
         required: true,
     }, 
 })
+
+orderSchema.index({ sellerId: 1, date: -1 });
+orderSchema.index({ userId: 1, date: -1 });
 
 const orderModel = mongoose.models.order || mongoose.model('order', orderSchema);
 
