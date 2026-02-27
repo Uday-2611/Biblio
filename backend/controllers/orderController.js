@@ -232,8 +232,12 @@ const placeOrder = async (req, res) => {
     } catch (error) {
         console.error('placeOrder error:', error);
         const lowerMessage = String(error.message || '').toLowerCase();
-        const isValidation = lowerMessage.includes('stock') || lowerMessage.includes('invalid');
-        const message = isValidation ? error.message : 'An error occurred while placing the order';
+        const isValidation =
+            lowerMessage.includes('stock') ||
+            lowerMessage.includes('invalid') ||
+            lowerMessage.includes('missing seller') ||
+            lowerMessage.includes('required');
+        const message = error?.message || 'An error occurred while placing the order';
 
         return res.status(isValidation ? 400 : 500).json({
             success: false,
