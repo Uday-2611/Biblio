@@ -33,7 +33,7 @@ export const ShopContext = createContext({
 
 const ShopContextProvider = ({ children }) => {
     const navigate = useNavigate();
-    const backendUrl = 'https://pageturner-backend.onrender.com';
+    const backendUrl = (import.meta.env.VITE_BACKEND_URL || 'https://pageturner-backend.onrender.com').trim();
     const { isLoaded: authLoaded, isSignedIn, getToken } = useAuth();
     const { signOut } = useClerk();
 
@@ -67,7 +67,9 @@ const ShopContextProvider = ({ children }) => {
             }
         } catch (error) {
             console.error('Error fetching products:', error);
-            toast.error('Failed to fetch products');
+            setProducts([]);
+            const message = error?.response?.data?.message || 'Failed to fetch products';
+            toast.error(message);
         }
     };
 
