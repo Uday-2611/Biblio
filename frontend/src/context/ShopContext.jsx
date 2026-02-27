@@ -33,7 +33,7 @@ export const ShopContext = createContext({
 
 const ShopContextProvider = ({ children }) => {
     const navigate = useNavigate();
-    const backendUrl = (import.meta.env.VITE_BACKEND_URL || 'https://pageturner-backend.onrender.com').trim();
+    const backendUrl = (import.meta.env.VITE_BACKEND_URL || 'https://biblio-backend.vercel.app').trim().replace(/\/+$/, '');
     const { isLoaded: authLoaded, isSignedIn, getToken } = useAuth();
     const { signOut } = useClerk();
 
