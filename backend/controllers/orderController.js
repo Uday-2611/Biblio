@@ -50,6 +50,108 @@ const hasValidAddress = (address) => {
     return required.every((field) => Boolean(address[field]));
 };
 
+const isTransactionUnsupportedError = (error) => {
+    const message = String(error?.message || '').toLowerCase();
+    return (
+        message.includes('transaction numbers are only allowed on a replica set member or mongos') ||
+        message.includes('transaction not supported') ||
+        message.includes('replica set') ||
+        error?.codeName === 'IllegalOperation'
+    );
+};
+
+const buildOrdersAndAdjustInventory = async ({
+    normalizedItems,
+    safeAddress,
+    paymentMethod,
+    userId,
+    useSession = false,
+    session = null
+}) => {
+    const productIds = [...new Set(normalizedItems.map((item) => item.productId.toString()))];
+    const productQuery = productModel.find({ _id: { $in: productIds } });
+    const products = useSession ? await productQuery.session(session) : await productQuery;
+    const productMap = new Map(products.map((product) => [product._id.toString(), product]));
+    const decrementedItems = [];
+    const itemsBySeller = new Map();
+
+    try {
+        for (const item of normalizedItems) {
+            const product = productMap.get(item.productId.toString());
+            if (!product) {
+                throw new Error('One or more products are invalid');
+            }
+
+            if (!product.sellerId) {
+                throw new Error(`Product "${product.name}" is missing seller information`);
+            }
+
+            const availableStock = Number.isFinite(product.stock) ? product.stock : 0;
+            if (item.quantity > availableStock) {
+                throw new Error(`Insufficient stock for "${product.name}"`);
+            }
+
+            const updateFilter = { _id: product._id, stock: { $gte: item.quantity } };
+            const updateData = { $inc: { stock: -item.quantity } };
+            const updateOptions = useSession ? { session } : {};
+            const stockUpdate = await productModel.updateOne(updateFilter, updateData, updateOptions);
+
+            if (stockUpdate.modifiedCount !== 1) {
+                throw new Error(`Insufficient stock for "${product.name}"`);
+            }
+
+            decrementedItems.push({ productId: product._id, quantity: item.quantity });
+
+            const sellerKey = product.sellerId.toString();
+            if (!itemsBySeller.has(sellerKey)) {
+                itemsBySeller.set(sellerKey, {
+                    sellerId: product.sellerId,
+                    items: [],
+                    subtotal: 0
+                });
+            }
+
+            const sellerBucket = itemsBySeller.get(sellerKey);
+            sellerBucket.items.push({
+                _id: product._id.toString(),
+                name: product.name,
+                price: Number(product.price),
+                quantity: item.quantity,
+                image: product.image,
+                sellerId: product.sellerId
+            });
+            sellerBucket.subtotal += Number(product.price) * item.quantity;
+        }
+
+        const orderGroups = [...itemsBySeller.values()];
+        const createdOrders = orderGroups.map((group, index) => ({
+            userId,
+            sellerId: group.sellerId,
+            items: group.items,
+            amount: group.subtotal + (index === 0 ? DELIVERY_FEE : 0),
+            address: safeAddress,
+            paymentMethod,
+            payment: false,
+            date: Date.now(),
+            status: 'Order Placed'
+        }));
+
+        return { createdOrders };
+    } catch (error) {
+        if (!useSession && decrementedItems.length > 0) {
+            await Promise.allSettled(
+                decrementedItems.map((entry) =>
+                    productModel.updateOne(
+                        { _id: entry.productId },
+                        { $inc: { stock: entry.quantity } }
+                    )
+                )
+            );
+        }
+        throw error;
+    }
+};
+
 // Place order ->
 const placeOrder = async (req, res) => {
     const session = await mongoose.startSession();
@@ -88,75 +190,39 @@ const placeOrder = async (req, res) => {
         }
 
         let createdOrders = [];
-        await session.withTransaction(async () => {
-            const productIds = [...new Set(normalizedItems.map((item) => item.productId.toString()))];
-            const products = await productModel.find({ _id: { $in: productIds } }).session(session);
-            const productMap = new Map(products.map((product) => [product._id.toString(), product]));
-
-            const itemsBySeller = new Map();
-
-            for (const item of normalizedItems) {
-                const product = productMap.get(item.productId.toString());
-                if (!product) {
-                    throw new Error('One or more products are invalid');
-                }
-
-                const availableStock = Number.isFinite(product.stock) ? product.stock : 0;
-                if (item.quantity > availableStock) {
-                    throw new Error(`Insufficient stock for "${product.name}"`);
-                }
-
-                const stockUpdate = await productModel.updateOne(
-                    { _id: product._id, stock: { $gte: item.quantity } },
-                    { $inc: { stock: -item.quantity } },
-                    { session }
-                );
-
-                if (stockUpdate.modifiedCount !== 1) {
-                    throw new Error(`Insufficient stock for "${product.name}"`);
-                }
-
-                const sellerKey = product.sellerId.toString();
-                if (!itemsBySeller.has(sellerKey)) {
-                    itemsBySeller.set(sellerKey, {
-                        sellerId: product.sellerId,
-                        items: [],
-                        subtotal: 0
-                    });
-                }
-
-                const sellerBucket = itemsBySeller.get(sellerKey);
-                sellerBucket.items.push({
-                    _id: product._id.toString(),
-                    name: product.name,
-                    price: Number(product.price),
-                    quantity: item.quantity,
-                    image: product.image,
-                    sellerId: product.sellerId
+        try {
+            await session.withTransaction(async () => {
+                const result = await buildOrdersAndAdjustInventory({
+                    normalizedItems,
+                    safeAddress,
+                    paymentMethod,
+                    userId,
+                    useSession: true,
+                    session
                 });
-                sellerBucket.subtotal += Number(product.price) * item.quantity;
+
+                createdOrders = result.createdOrders;
+                await orderModel.insertMany(createdOrders, { session });
+                await userModel.findByIdAndUpdate(req.user._id, { cartData: {} }, { session });
+            });
+        } catch (txnError) {
+            if (!isTransactionUnsupportedError(txnError)) {
+                throw txnError;
             }
 
-            const orderGroups = [...itemsBySeller.values()];
-            createdOrders = [];
-
-            orderGroups.forEach((group, index) => {
-                createdOrders.push({
-                    userId,
-                    sellerId: group.sellerId,
-                    items: group.items,
-                    amount: group.subtotal + (index === 0 ? DELIVERY_FEE : 0),
-                    address: safeAddress,
-                    paymentMethod,
-                    payment: false,
-                    date: Date.now(),
-                    status: 'Order Placed'
-                });
+            console.warn('Transactions unsupported, using non-transaction order fallback');
+            const result = await buildOrdersAndAdjustInventory({
+                normalizedItems,
+                safeAddress,
+                paymentMethod,
+                userId,
+                useSession: false
             });
 
-            await orderModel.insertMany(createdOrders, { session });
-            await userModel.findByIdAndUpdate(req.user._id, { cartData: {} }, { session });
-        });
+            createdOrders = result.createdOrders;
+            await orderModel.insertMany(createdOrders);
+            await userModel.findByIdAndUpdate(req.user._id, { cartData: {} });
+        }
 
         return res.status(201).json({
             success: true,
