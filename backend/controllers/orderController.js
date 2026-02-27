@@ -91,7 +91,10 @@ const buildOrdersAndAdjustInventory = async ({
                 throw new Error(`Insufficient stock for "${product.name}"`);
             }
 
-            const updateFilter = { _id: product._id, stock: { $gte: item.quantity } };
+            const updateFilter = {
+                _id: product._id,
+                stock: mongoose.trusted({ $gte: item.quantity })
+            };
             const updateData = { $inc: { stock: -item.quantity } };
             const updateOptions = useSession ? { session } : {};
             const stockUpdate = await productModel.updateOne(updateFilter, updateData, updateOptions);
