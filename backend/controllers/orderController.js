@@ -69,7 +69,7 @@ const buildOrdersAndAdjustInventory = async ({
     session = null
 }) => {
     const productIds = [...new Set(normalizedItems.map((item) => item.productId.toString()))];
-    const productQuery = productModel.find({ _id: { $in: productIds } });
+    const productQuery = productModel.find({ _id: mongoose.trusted({ $in: productIds }) });
     const products = useSession ? await productQuery.session(session) : await productQuery;
     const productMap = new Map(products.map((product) => [product._id.toString(), product]));
     const decrementedItems = [];
