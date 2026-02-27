@@ -112,7 +112,7 @@ const ShopContextProvider = ({ children }) => {
             }
 
             try {
-                const sessionToken = await getToken();
+                const sessionToken = await getToken({ skipCache: true });
                 if (!sessionToken) {
                     setToken('');
                     setUser(null);
@@ -150,12 +150,19 @@ const ShopContextProvider = ({ children }) => {
 
     useEffect(() => {
         const syncCart = async () => {
-            if (isSignedIn && token && user) {
+            if (isSignedIn && user) {
                 try {
+                    const sessionToken = await getToken({ skipCache: true });
+                    if (!sessionToken) {
+                        return;
+                    }
+                    if (sessionToken !== token) {
+                        setToken(sessionToken);
+                    }
                     await axios.post(
                         `${backendUrl}/api/cart/update`,
                         { cartData: cartItems },
-                        { headers: { token } }
+                        { headers: { token: sessionToken } }
                     );
                     localStorage.setItem('cartItems', JSON.stringify(cartItems));
                 } catch (error) {
@@ -167,7 +174,7 @@ const ShopContextProvider = ({ children }) => {
         };
 
         syncCart();
-    }, [cartItems, token, user, isSignedIn, backendUrl]);
+    }, [cartItems, token, user, isSignedIn, backendUrl, getToken]);
 
     const logout = async () => {
         localStorage.removeItem('cartItems');

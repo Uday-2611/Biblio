@@ -2,6 +2,7 @@ import { useContext, useState } from 'react'
 import { ShopContext } from '../context/ShopContext'
 import { toast } from 'react-toastify'
 import axios from 'axios'
+import { useAuth } from '@clerk/clerk-react'
 
 const PlaceOrder = () => {
   const [formData, setFormData] = useState({
@@ -15,6 +16,7 @@ const PlaceOrder = () => {
   })
 
   const { getCartAmount, delivery_fee, navigate, token, cartItems, backendUrl, setCartItems, products } = useContext(ShopContext)
+  const { getToken } = useAuth()
 
   const onChangeHandler = (event) => {
     const name = event.target.name
@@ -57,8 +59,15 @@ const PlaceOrder = () => {
         paymentMethod: 'cod'
       }
 
+      const sessionToken = await getToken({ skipCache: true })
+      if (!sessionToken) {
+        toast.error('Session expired. Please login again.')
+        navigate('/login')
+        return
+      }
+
       const response = await axios.post(`${backendUrl}/api/order/place`, orderData, {
-        headers: { token }
+        headers: { token: sessionToken }
       })
 
       if (response.data.success) {
